@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>MedDeck</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@700;800&family=Literata:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0d0d0d; --surface:#141414; --card:#1a1a1a; --border:#2a2a2a;
+  --accent:#c8f135; --a2:#f1a435; --a3:#35c8f1;
+  --text:#e8e8e0; --dim:#888; --muted:#444;
+  --red:#f13535; --green:#35f179;
+  --mono:'Space Mono',monospace; --sans:'Syne',sans-serif; --serif:'Literata',Georgia,serif;
+  --r:0px;
+}
+body.light {
+  --bg:#f5f0e8; --surface:#ede8df; --card:#faf7f2; --border:#d0c8bc;
+  --accent:#2d6a4f; --a2:#c77c2a; --a3:#1a6b8a;
+  --text:#1a1814; --dim:#5a5248; --muted:#9a9088;
+  --red:#c0392b; --green:#27ae60;
+  --r:3px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{font-size:16px;}
+body{background:var(--bg);color:var(--text);font-family:var(--mono);min-height:100vh;transition:background .25s,color .25s;}
+body.dark::after{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(200,241,53,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(200,241,53,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
+body.dark::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.07) 2px,rgba(0,0,0,.07) 4px);pointer-events:none;z-index:1000;}
+body.light::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0;}
+.wrap{position:relative;z-index:1;}
+
+/* ── HEADER ── */
+header{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:0;z-index:100;}
+.logo{font-family:var(--sans);font-weight:800;font-size:20px;display:flex;align-items:center;gap:8px;}
+.badge{background:var(--accent);color:#000;font-size:9px;font-family:var(--mono);font-weight:700;padding:2px 6px;letter-spacing:2px;border-radius:var(--r);}
+.hright{display:flex;align-items:center;gap:8px;}
+
+/* ── BUTTONS ── */
+.btn{font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;padding:7px 13px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;transition:all .15s;border-radius:var(--r);white-space:nowrap;}
+.btn:hover{border-color:var(--accent);color:var(--accent);}
+.btn-p{background:var(--accent);color:#000;border-color:var(--accent);font-weight:700;}
+.btn-p:hover{opacity:.85;}
+.btn-sm{font-size:10px;padding:5px 10px;}
+.btn-icon{border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:15px;transition:all .15s;border-radius:var(--r);}
+.btn-icon:hover{border-color:var(--accent);color:var(--accent);}
+
+/* ── TABS ── */
+.tabs{display:flex;border-bottom:1px solid var(--border);padding:0 20px;overflow-x:auto;scrollbar-width:none;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{font-family:var(--mono);font-size:11px;letter-spacing:2px;text-transform:uppercase;padding:12px 16px;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;background:none;border-top:none;border-left:none;border-right:none;transition:all .15s;white-space:nowrap;flex-shrink:0;}
+.tab:hover{color:var(--dim);}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+
+/* ── MOBILE NAV ── */
+.mob-nav{display:none;position:fixed;bottom:0;left:0;right:0;height:56px;background:var(--surface);border-top:1px solid var(--border);z-index:200;align-items:stretch;}
+.mob-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:none;border:none;color:var(--muted);cursor:pointer;font-family:var(--mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;transition:color .15s;}
+.mob-btn .ic{font-size:18px;line-height:1;}
+.mob-btn.active{color:var(--accent);}
+
+/* ── LAYOUT ── */
+main{padding:24px 20px;max-width:1060px;margin:0 auto;}
+.page{display:none;}
+.page.active{display:block;}
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:10px;flex-wrap:wrap;}
+.st{font-family:var(--sans);font-weight:700;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);}
+
+/* ── STATS ── */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:24px;}
+.stat{background:var(--surface);padding:18px;display:flex;flex-direction:column;gap:5px;}
+.stat-l{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+.stat-v{font-family:var(--sans);font-size:30px;font-weight:800;line-height:1;}
+.stat-v.y{color:var(--accent);} .stat-v.b{color:var(--a3);} .stat-v.g{color:var(--green);} .stat-v.o{color:var(--a2);}
+.stat-s{font-size:10px;color:var(--muted);}
+
+/* ── DECK LIST ── */
+.deck-list{display:flex;flex-direction:column;gap:1px;background:var(--border);border:1px solid var(--border);}
+.deck-row{background:var(--surface);padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:background .1s;flex-wrap:wrap;}
+.deck-row:hover{background:var(--card);}
+.dk-info{flex:1;min-width:0;}
+.dk-name{font-family:var(--sans);font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.dk-meta{font-size:10px;color:var(--muted);margin-top:2px;}
+.dk-counts{display:flex;gap:12px;flex-shrink:0;}
+.dkc{display:flex;flex-direction:column;align-items:center;gap:1px;min-width:32px;}
+.dkc .v{font-family:var(--sans);font-weight:800;font-size:18px;line-height:1;}
+.dkc .l{font-size:9px;letter-spacing:1px;color:var(--muted);text-transform:uppercase;}
+.dkc.due .v{color:var(--a2);} .dkc.new .v{color:var(--a3);} .dkc.rev .v{color:var(--green);}
+.study-btn{font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:7px 14px;background:var(--accent);color:#000;border:none;cursor:pointer;font-family:var(--mono);font-weight:700;transition:opacity .15s;flex-shrink:0;border-radius:var(--r);}
+.study-btn:hover{opacity:.85;}
+.study-btn:disabled{background:var(--border);color:var(--muted);cursor:default;opacity:1;}
+
+/* ── STUDY ── */
+.study-top{display:flex;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap;}
+.study-dn{font-family:var(--sans);font-weight:700;font-size:13px;color:var(--dim);flex-shrink:0;}
+.prog-wrap{flex:1;min-width:60px;height:2px;background:var(--border);}
+.prog-fill{height:100%;background:var(--accent);transition:width .4s;}
+.card-ctr{font-size:11px;color:var(--muted);flex-shrink:0;}
+.stem{border:1px solid var(--border);background:var(--surface);padding:18px 20px;margin-bottom:18px;position:relative;}
+.stem::before{content:'CASE STEM';position:absolute;top:-1px;left:14px;background:var(--a2);color:#000;font-size:9px;font-family:var(--mono);font-weight:700;letter-spacing:2px;padding:1px 6px;}
+.stem-text{font-family:var(--serif);font-size:14px;line-height:1.75;margin-top:8px;}
+.scene{perspective:1200px;display:flex;align-items:center;justify-content:center;cursor:pointer;min-height:260px;margin-bottom:18px;-webkit-tap-highlight-color:transparent;}
+.card3d{width:100%;max-width:640px;height:280px;position:relative;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,0,.2,1);}
+.card3d.flip{transform:rotateY(180deg);}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border:1px solid var(--border);background:var(--card);display:flex;flex-direction:column;padding:28px;border-radius:var(--r);transition:background .25s,border-color .25s;}
+.back{transform:rotateY(180deg);}
+.face-lbl{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.face-lbl::after{content:'';flex:1;height:1px;background:var(--border);}
+.face-body{flex:1;display:flex;align-items:center;justify-content:center;text-align:center;overflow-y:auto;}
+.f-q{font-family:var(--serif);font-size:22px;font-weight:600;line-height:1.4;}
+.f-a{font-family:var(--serif);font-size:15px;line-height:1.8;}
+.face-hint{font-size:10px;color:var(--muted);text-align:center;margin-top:10px;letter-spacing:1px;}
+.ratings{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;opacity:0;transform:translateY(8px);transition:opacity .25s,transform .25s;pointer-events:none;}
+.ratings.show{opacity:1;transform:none;pointer-events:all;}
+.rb{font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;padding:11px 6px;border:1px solid var(--border);background:var(--surface);color:var(--dim);cursor:pointer;transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:3px;border-radius:var(--r);}
+.rb .rl{font-size:12px;font-weight:700;} .rb .ri{font-size:10px;color:var(--muted);}
+.rb.again:hover{border-color:var(--red);color:var(--red);background:rgba(241,53,53,.05);}
+.rb.hard:hover{border-color:var(--a2);color:var(--a2);background:rgba(241,164,53,.05);}
+.rb.good:hover{border-color:var(--accent);color:var(--accent);background:rgba(200,241,53,.05);}
+.rb.easy:hover{border-color:var(--green);color:var(--green);background:rgba(53,241,121,.05);}
+.done{text-align:center;padding:60px 24px;}
+.done .di{font-size:52px;margin-bottom:14px;}
+.done h2{font-family:var(--sans);font-weight:800;font-size:28px;color:var(--accent);margin-bottom:8px;}
+.done p{font-size:12px;color:var(--muted);letter-spacing:1px;margin-bottom:22px;}
+
+/* ── EDITOR ── */
+.ed-top{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
+.ed-sel{background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:12px;padding:6px 11px;outline:none;cursor:pointer;-webkit-appearance:none;border-radius:var(--r);}
+.ed-grid{display:grid;grid-template-columns:250px 1fr;gap:1px;background:var(--border);border:1px solid var(--border);min-height:460px;}
+.ed-side{background:var(--surface);display:flex;flex-direction:column;overflow:hidden;}
+.side-tabs{display:flex;border-bottom:1px solid var(--border);}
+.stab{flex:1;font-family:var(--mono);font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:9px 4px;background:none;border:none;border-bottom:2px solid transparent;color:var(--muted);cursor:pointer;transition:all .15s;margin-bottom:-1px;}
+.stab.active{color:var(--accent);border-bottom-color:var(--accent);}
+.side-body{flex:1;overflow-y:auto;}
+.side-hdr{padding:9px 13px;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.addbtn{background:none;border:1px solid var(--border);color:var(--accent);cursor:pointer;width:21px;height:21px;display:flex;align-items:center;justify-content:center;font-size:15px;line-height:1;padding-bottom:1px;transition:all .15s;border-radius:var(--r);}
+.addbtn:hover{background:var(--accent);color:#000;border-color:var(--accent);}
+.case-item{border-bottom:1px solid var(--border);}
+.case-hdr{padding:9px 13px;display:flex;align-items:center;gap:7px;cursor:pointer;transition:background .1s;}
+.case-hdr:hover{background:rgba(200,241,53,.03);}
+.case-item.open .case-hdr{background:rgba(200,241,53,.05);}
+.exp{font-size:9px;color:var(--muted);transition:transform .2s;flex-shrink:0;}
+.case-item.open .exp{transform:rotate(90deg);}
+.case-t{font-size:12px;color:var(--dim);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.case-n{font-size:10px;color:var(--muted);flex-shrink:0;}
+.case-cards-list{display:none;background:var(--bg);}
+.case-item.open .case-cards-list{display:block;}
+.crd-row{padding:7px 13px 7px 30px;border-bottom:1px solid var(--border);cursor:pointer;display:flex;align-items:center;gap:7px;font-size:11px;color:var(--muted);transition:background .1s;}
+.crd-row:hover{background:rgba(200,241,53,.03);color:var(--dim);}
+.crd-row.sel{color:var(--accent);border-left:2px solid var(--accent);}
+.crd-q{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.delbtn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;opacity:0;transition:opacity .15s,color .15s;flex-shrink:0;}
+.crd-row:hover .delbtn{opacity:1;}
+.delbtn:hover{color:var(--red);}
+.ed-main{background:var(--card);padding:24px;display:flex;flex-direction:column;gap:18px;overflow-y:auto;}
+.empty-p{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;min-height:280px;color:var(--muted);font-size:11px;letter-spacing:1px;gap:10px;}
+.empty-p .epi{font-size:38px;opacity:.3;}
+.ef{display:flex;flex-direction:column;gap:6px;}
+.el{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+.ei,.eta{background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:var(--serif);font-size:14px;padding:9px 13px;outline:none;transition:border-color .15s;resize:none;line-height:1.65;width:100%;border-radius:var(--r);}
+.ei:focus,.eta:focus{border-color:var(--accent);}
+.eta{height:105px;}
+.eta.tall{height:145px;}
+.card-meta{display:flex;gap:16px;font-size:11px;color:var(--muted);flex-wrap:wrap;}
+.tag-new{color:var(--a3);} .tag-learning{color:var(--a2);} .tag-review{color:var(--green);} .tag-relearn{color:var(--red);}
+
+/* ── PROGRESS ── */
+.pg-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:20px;}
+.pg-panel{background:var(--surface);padding:20px;}
+.pg-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+.bar-chart{display:flex;align-items:flex-end;gap:5px;height:86px;}
+.bc{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;}
+.bar{width:100%;background:var(--border);min-height:3px;border-radius:1px 1px 0 0;}
+.bar.g{background:var(--green);} .bar.y{background:var(--accent);} .bar.o{background:var(--a2);}
+.bday{font-size:9px;color:var(--muted);}
+.heatmap{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+.hc{aspect-ratio:1;background:var(--border);border-radius:1px;}
+.hc.l1{background:rgba(200,241,53,.2);} .hc.l2{background:rgba(200,241,53,.45);} .hc.l3{background:rgba(200,241,53,.7);} .hc.l4{background:var(--accent);}
+body.light .hc.l1{background:rgba(45,106,79,.2);} body.light .hc.l2{background:rgba(45,106,79,.45);} body.light .hc.l3{background:rgba(45,106,79,.7);} body.light .hc.l4{background:var(--accent);}
+.st-dist{display:flex;flex-direction:column;gap:9px;}
+.st-row{display:flex;align-items:center;gap:9px;}
+.st-trk{flex:1;height:5px;background:var(--border);border-radius:2px;}
+.st-fill{height:100%;border-radius:2px;transition:width .5s;}
+.st-nm{width:60px;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:1px;}
+.st-n{width:26px;text-align:right;font-size:10px;}
+
+/* ── MODAL ── */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:500;align-items:center;justify-content:center;padding:20px;}
+.overlay.open{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border);padding:26px;width:100%;max-width:390px;border-radius:var(--r);box-shadow:0 20px 60px rgba(0,0,0,.5);}
+.modal-title{font-family:var(--sans);font-weight:700;font-size:18px;margin-bottom:18px;}
+.modal-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--border);gap:12px;}
+.modal-row-lbl{font-size:12px;color:var(--dim);}
+.modal-row-sub{font-size:10px;color:var(--muted);margin-top:2px;}
+.modal-actions{display:flex;gap:8px;margin-top:18px;flex-wrap:wrap;}
+.tog{display:flex;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
+.tog-opt{font-family:var(--mono);font-size:10px;letter-spacing:1px;padding:5px 10px;background:none;border:none;color:var(--muted);cursor:pointer;transition:all .15s;text-transform:uppercase;}
+.tog-opt.active{background:var(--accent);color:#000;font-weight:700;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:660px){
+  .stats{grid-template-columns:repeat(2,1fr);}
+  .pg-grid{grid-template-columns:1fr;}
+  .tabs{display:none;}
+  .mob-nav{display:flex;}
+  main{padding:16px 14px;padding-bottom:72px;}
+  .ed-grid{grid-template-columns:1fr;}
+  .ed-side{max-height:240px;}
+  .card3d{height:250px;}
+  .face{padding:20px;}
+  .f-q{font-size:18px;}
+  .f-a{font-size:14px;}
+  .ratings{grid-template-columns:repeat(2,1fr);}
+  .dk-counts{display:none;}
+}
+@media(max-width:380px){
+  .stat-v{font-size:24px;}
+}
+
+/* scrollbar */
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+</style>
+</head>
+<body class="dark">
+<div class="wrap">
+
+<header>
+  <div class="logo">MedDeck <span class="badge">FSRS</span></div>
+  <div class="hright">
+    <button class="btn-icon" id="theme-btn" onclick="toggleTheme()" title="Toggle theme">☀️</button>
+    <button class="btn btn-sm btn-p" onclick="openModal('modal-deck')">+ Deck</button>
+  </div>
+</header>
+
+<nav class="tabs">
+  <button class="tab active" data-page="dashboard" onclick="nav('dashboard',this)">Dashboard</button>
+  <button class="tab" data-page="study"     onclick="nav('study',this)">Study</button>
+  <button class="tab" data-page="editor"    onclick="nav('editor',this)">Cards</button>
+  <button class="tab" data-page="progress"  onclick="nav('progress',this)">Progress</button>
+</nav>
+
+<main>
+  <!-- DASHBOARD -->
+  <div id="page-dashboard" class="page active">
+    <div class="stats">
+      <div class="stat"><div class="stat-l">Due Today</div><div class="stat-v y" id="s-due">0</div><div class="stat-s">cards</div></div>
+      <div class="stat"><div class="stat-l">New</div><div class="stat-v b" id="s-new">0</div><div class="stat-s">to introduce</div></div>
+      <div class="stat"><div class="stat-l">Streak</div><div class="stat-v g" id="s-str">0</div><div class="stat-s">days</div></div>
+      <div class="stat"><div class="stat-l">Total</div><div class="stat-v o" id="s-tot">0</div><div class="stat-s">cards</div></div>
+    </div>
+    <div class="sh">
+      <div class="st">Decks</div>
+      <button class="btn btn-sm btn-p" id="all-btn" onclick="startStudy(null)">Study All Due →</button>
+    </div>
+    <div class="deck-list" id="deck-list"></div>
+  </div>
+
+  <!-- STUDY -->
+  <div id="page-study" class="page">
+    <div id="study-inner"></div>
+  </div>
+
+  <!-- EDITOR -->
+  <div id="page-editor" class="page">
+    <div class="ed-top">
+      <div class="st" style="margin:0">Deck:</div>
+      <select class="ed-sel" id="ed-deck" onchange="onDeckChange()"></select>
+      <button class="btn btn-sm" onclick="openDeckSettings()">⚙ Settings</button>
+      <div style="flex:1"></div>
+      <button class="btn btn-sm" onclick="deleteDeck()" style="color:var(--red)">Delete Deck</button>
+    </div>
+    <div class="ed-grid">
+      <div class="ed-side">
+        <div class="side-tabs">
+          <button class="stab active" onclick="setSideTab('cases',this)">Cases</button>
+          <button class="stab" onclick="setSideTab('all',this)">All Cards</button>
+        </div>
+        <div class="side-body" id="side-body"></div>
+      </div>
+      <div class="ed-main" id="ed-main">
+        <div class="empty-p"><div class="epi">🗂</div><div>Select a case or card</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROGRESS -->
+  <div id="page-progress" class="page">
+    <div class="pg-grid">
+      <div class="pg-panel"><div class="pg-title">Reviews This Week</div><div class="bar-chart" id="bar-chart"></div></div>
+      <div class="pg-panel"><div class="pg-title">Activity — 28 Days</div><div class="heatmap" id="heatmap"></div></div>
+      <div class="pg-panel"><div class="pg-title">Card States</div><div class="st-dist" id="st-dist"></div></div>
+      <div class="pg-panel"><div class="pg-title">By Deck</div><div id="deck-pg"></div></div>
+    </div>
+  </div>
+</main>
+
+<nav class="mob-nav">
+  <button class="mob-btn active" data-page="dashboard" onclick="nav('dashboard',this)"><span class="ic">🏠</span>Home</button>
+  <button class="mob-btn" data-page="study"     onclick="nav('study',this)"><span class="ic">📚</span>Study</button>
+  <button class="mob-btn" data-page="editor"    onclick="nav('editor',this)"><span class="ic">✏️</span>Cards</button>
+  <button class="mob-btn" data-page="progress"  onclick="nav('progress',this)"><span class="ic">📊</span>Stats</button>
+</nav>
+</div>
+
+<!-- MODALS -->
+<div class="overlay" id="modal-deck">
+  <div class="modal">
+    <div class="modal-title">New Deck</div>
+    <div class="ef">
+      <label class="el">Deck Name</label>
+      <input class="ei" id="new-deck-name" placeholder="e.g. Cardiology" onkeydown="if(event.key==='Enter')createDeck()">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-p" onclick="createDeck()">Create</button>
+      <button class="btn" onclick="closeModal('modal-deck')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="modal-settings">
+  <div class="modal">
+    <div class="modal-title" id="settings-title">Deck Settings</div>
+    <div class="modal-row">
+      <div><div class="modal-row-lbl">Stem display</div><div class="modal-row-sub">How the case vignette appears</div></div>
+      <div class="tog">
+        <button class="tog-opt active" id="tog-once"   onclick="setStemMode('once')">Once</button>
+        <button class="tog-opt"        id="tog-always" onclick="setStemMode('always')">Always</button>
+      </div>
+    </div>
+    <div class="modal-row">
+      <div><div class="modal-row-lbl">New cards / day</div><div class="modal-row-sub">Max new cards per session</div></div>
+      <input class="ei" id="new-limit" type="number" min="1" max="200" value="20" style="width:60px;padding:5px 9px;text-align:center;">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-p" onclick="saveDeckSettings()">Save</button>
+      <button class="btn" onclick="closeModal('modal-settings')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════
+//  DATA
+// ══════════════════════════════
+const KEY = 'meddeck3';
+
+function load() {
+  try { return JSON.parse(localStorage.getItem(KEY)) || seed(); }
+  catch(e) { return seed(); }
+}
+
+function save() { localStorage.setItem(KEY, JSON.stringify(db)); }
+
+function seed() {
+  return {
+    decks: [{ id:'d1', name:'Cardiology', stemMode:'once', newLimit:20 }],
+    cases: [{
+      id:'ca1', deckId:'d1',
+      title:'Acute Coronary Syndrome',
+      stem:'A 58-year-old male smoker presents with 45 minutes of crushing central chest pain radiating to the left arm, with diaphoresis and nausea. BP 150/90, HR 98, SpO₂ 96%. ECG: 2mm ST elevation in II, III, aVF.'
+    }],
+    cards: [
+      mkCard('c1','d1','ca1','What is the most likely diagnosis?','Inferior STEMI, likely RCA occlusion given ST elevation in inferior leads (II, III, aVF).'),
+      mkCard('c2','d1','ca1','What is the immediate management priority?','Activate the cath lab for primary PCI within 90 minutes. Give aspirin 300mg + P2Y12 inhibitor, anticoagulation, oxygen if SpO₂ <94%.'),
+      mkCard('c3','d1','ca1','Which vessel is most likely occluded and why?','Right coronary artery (RCA) — supplies the inferior LV wall. ST changes in inferior leads localise the territory.'),
+    ],
+    log: {},
+    streak: { date: null, count: 0 },
+    theme: 'dark',
+  };
+}
+
+function mkCard(id, deckId, caseId, q, a) {
+  return { id, deckId, caseId, q, a, state:'new', due:today(), stab:1, diff:5, reps:0, lapses:0, rated:null };
+}
+
+function uid(p) { return p + Date.now().toString(36) + Math.random().toString(36).slice(2,5); }
+function today() { return new Date().toISOString().slice(0,10); }
+const TODAY = today();
+
+let db = load();
+
+// ══════════════════════════════
+//  FSRS-LITE
+// ══════════════════════════════
+const FSRS = {
+  initD(g)   { return Math.min(10, Math.max(1, 5 - (g-3)*0.72)); },
+  initS(g)   { return [1,1,4,14][g-1] || 1; },
+  nextD(d,g) { return Math.min(10, Math.max(1, d + -0.72*(g-3)*(10-d)/9)); },
+  ret(s,days){ return Math.pow(0.9, days/s); },
+  nextS(s,d,r,g) {
+    if (g < 3) return Math.max(1, s*0.2);
+    const hp = g===2 ? 0.8:1, eb = g===4 ? 1.3:1;
+    return s * (Math.exp(1.3)*(11-d)*Math.pow(s,-0.2)*(Math.exp((1-r)*1.0)-1)*hp*eb + 1);
+  },
+  schedule(card, g) {
+    const now = new Date();
+    const days = card.rated ? Math.max(0,(now - new Date(card.rated))/86400000) : 0;
+    let s=card.stab, d=card.diff, reps=card.reps, lap=card.lapses, state=card.state;
+    if (state==='new') {
+      d=this.initD(g); s=this.initS(g); state=g<3?'learning':'review';
+    } else {
+      const r=this.ret(s,days); d=this.nextD(d,g); s=this.nextS(s,d,r,g);
+      if(g<3){lap++;state='relearn';}else{state='review';}
+    }
+    reps++;
+    const due = new Date(now); due.setDate(due.getDate()+Math.max(1,Math.round(s)));
+    return { stab:s, diff:d, reps, lapses:lap, state, due:due.toISOString().slice(0,10), rated:now.toISOString() };
+  },
+  ivls(card) {
+    return [1,2,3,4].map(g => {
+      const d = Math.max(1, Math.round(this.schedule(card,g).stab));
+      return d<7 ? d+'d' : d<30 ? Math.round(d/7)+'w' : Math.round(d/30)+'mo';
+    });
+  }
+};
+
+// ══════════════════════════════
+//  THEME
+// ══════════════════════════════
+function toggleTheme() {
+  db.theme = db.theme==='dark' ? 'light' : 'dark';
+  applyTheme(); save();
+}
+function applyTheme() {
+  document.body.className = db.theme;
+  document.getElementById('theme-btn').textContent = db.theme==='dark' ? '☀️' : '🌙';
+}
+
+// ══════════════════════════════
+//  NAV
+// ══════════════════════════════
+function nav(page, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab, .mob-btn').forEach(b => b.classList.toggle('active', b.dataset.page===page));
+  document.getElementById('page-'+page).classList.add('active');
+  if (page==='dashboard') renderDash();
+  if (page==='study')     renderStudy();
+  if (page==='editor')    renderEditor();
+  if (page==='progress')  renderProgress();
+}
+
+// ══════════════════════════════
+//  DASHBOARD
+// ══════════════════════════════
+function renderDash() {
+  const cards = db.cards||[];
+  const due  = cards.filter(c => c.due<=TODAY && c.state!=='new');
+  const newC = cards.filter(c => c.state==='new');
+  document.getElementById('s-due').textContent = due.length;
+  document.getElementById('s-new').textContent = newC.length;
+  document.getElementById('s-tot').textContent = cards.length;
+  document.getElementById('s-str').textContent = (db.streak||{}).count||0;
+  document.getElementById('all-btn').disabled = due.length+newC.length===0;
+
+  const list = document.getElementById('deck-list');
+  if (!(db.decks||[]).length) {
+    list.innerHTML = '<div style="padding:36px;text-align:center;font-size:11px;color:var(--muted)">No decks yet — press + Deck.</div>';
+    return;
+  }
+  list.innerHTML = db.decks.map(deck => {
+    const dc   = cards.filter(c => c.deckId===deck.id);
+    const d    = dc.filter(c => c.due<=TODAY && c.state!=='new').length;
+    const n    = dc.filter(c => c.state==='new').length;
+    const r    = dc.filter(c => c.state==='review').length;
+    const cs   = (db.cases||[]).filter(c => c.deckId===deck.id).length;
+    return `<div class="deck-row" onclick="startStudy('${deck.id}')">
+      <div class="dk-info">
+        <div class="dk-name">${esc(deck.name)}</div>
+        <div class="dk-meta">${dc.length} cards &middot; ${cs} cases</div>
+      </div>
+      <div class="dk-counts">
+        <div class="dkc due"><span class="v">${d}</span><span class="l">Due</span></div>
+        <div class="dkc new"><span class="v">${n}</span><span class="l">New</span></div>
+        <div class="dkc rev"><span class="v">${r}</span><span class="l">Rev</span></div>
+      </div>
+      <button class="study-btn" ${d+n===0?'disabled':''} onclick="event.stopPropagation();startStudy('${deck.id}')">
+        ${d+n===0?'✓ Done':'Study →'}
+      </button>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════
+//  STUDY
+// ══════════════════════════════
+let qDeckId=null, queue=[], qIdx=0, flipped=false, shownStems=new Set();
+
+function startStudy(deckId) {
+  qDeckId = deckId;
+  const cards = db.cards||[];
+  if (deckId) {
+    const lim = (db.decks.find(d=>d.id===deckId)||{}).newLimit||20;
+    const due = cards.filter(c=>c.deckId===deckId&&c.due<=TODAY&&c.state!=='new');
+    const nw  = cards.filter(c=>c.deckId===deckId&&c.state==='new').slice(0,lim);
+    queue = [...due, ...nw];
+  } else {
+    const due = cards.filter(c=>c.due<=TODAY&&c.state!=='new');
+    const nw  = cards.filter(c=>c.state==='new').slice(0,30);
+    queue = shuffle([...due,...nw]);
+  }
+  qIdx=0; flipped=false; shownStems.clear();
+  nav('study', document.querySelector('[data-page="study"]'));
+}
+
+function shuffle(a) {
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+
+function renderStudy() {
+  const el = document.getElementById('study-inner');
+  if (!queue.length) {
+    el.innerHTML=`<div class="done"><div class="di">📚</div><h2>Ready to Study</h2><p>Pick a deck from the dashboard.</p><button class="btn btn-p" onclick="nav('dashboard',document.querySelector('[data-page=dashboard]'))">Dashboard →</button></div>`;
+    return;
+  }
+  if (qIdx>=queue.length) {
+    bump(); save();
+    el.innerHTML=`<div class="done"><div class="di">🎯</div><h2>Session Complete</h2><p>Reviewed ${queue.length} card${queue.length!==1?'s':''}. Great work.</p><button class="btn btn-p" onclick="nav('dashboard',document.querySelector('[data-page=dashboard]'))">← Dashboard</button></div>`;
+    return;
+  }
+  const card   = queue[qIdx];
+  const deck   = (db.decks||[]).find(d=>d.id===card.deckId)||{};
+  const caseObj= card.caseId ? (db.cases||[]).find(c=>c.id===card.caseId) : null;
+  const ivls   = FSRS.ivls(card);
+  const pct    = (qIdx/queue.length*100).toFixed(1);
+  const stemMode = deck.stemMode||'once';
+  const showStem = caseObj && (stemMode==='always' || !shownStems.has(caseObj.id));
+  if (showStem) shownStems.add(caseObj.id);
+  const deckLbl = qDeckId ? esc(deck.name||'') : '🔀 Mixed';
+  const caseLbl = caseObj ? ` &mdash; <span style="color:var(--a2);font-size:11px">${esc(caseObj.title)}</span>` : '';
+
+  el.innerHTML=`
+  <div class="study-top">
+    <div class="study-dn">${deckLbl}${caseLbl}</div>
+    <div class="prog-wrap"><div class="prog-fill" style="width:${pct}%"></div></div>
+    <div class="card-ctr">${qIdx}/${queue.length} &middot; <span style="color:var(--a2)">${queue.length-qIdx} left</span></div>
+  </div>
+  ${showStem?`<div class="stem"><div class="stem-text">${esc(caseObj.stem)}</div></div>`:''}
+  <div class="scene" onclick="flip()">
+    <div class="card3d" id="c3d">
+      <div class="face front">
+        <div class="face-lbl">Question</div>
+        <div class="face-body"><div class="f-q">${esc(card.q)}</div></div>
+        <div class="face-hint">Click &middot; Space &middot; Enter to reveal</div>
+      </div>
+      <div class="face back">
+        <div class="face-lbl">Answer</div>
+        <div class="face-body"><div class="f-a">${esc(card.a)}</div></div>
+        <div class="face-hint">Rate your recall below</div>
+      </div>
+    </div>
+  </div>
+  <div class="ratings" id="ratings">
+    <button class="rb again" onclick="rate(1)"><span class="rl">Again</span><span class="ri">${ivls[0]}</span></button>
+    <button class="rb hard"  onclick="rate(2)"><span class="rl">Hard</span><span class="ri">${ivls[1]}</span></button>
+    <button class="rb good"  onclick="rate(3)"><span class="rl">Good</span><span class="ri">${ivls[2]}</span></button>
+    <button class="rb easy"  onclick="rate(4)"><span class="rl">Easy</span><span class="ri">${ivls[3]}</span></button>
+  </div>`;
+  flipped=false;
+}
+
+function flip() {
+  if (flipped) return;
+  flipped=true;
+  document.getElementById('c3d').classList.add('flip');
+  setTimeout(()=>document.getElementById('ratings').classList.add('show'),280);
+}
+
+function rate(g) {
+  const card = queue[qIdx];
+  const res  = FSRS.schedule(card,g);
+  const i    = db.cards.findIndex(c=>c.id===card.id);
+  if (i!==-1) Object.assign(db.cards[i],res);
+  if (!db.log[TODAY]) db.log[TODAY]=0;
+  db.log[TODAY]++;
+  if (g===1) queue.push({...card,...res});
+  qIdx++; flipped=false; save(); renderStudy();
+}
+
+function bump() {
+  const s = db.streak||{date:null,count:0};
+  if (s.date===TODAY) return;
+  const y = new Date(); y.setDate(y.getDate()-1);
+  s.count = s.date===y.toISOString().slice(0,10) ? s.count+1 : 1;
+  s.date=TODAY; db.streak=s;
+}
+
+document.addEventListener('keydown',e=>{
+  if (!document.getElementById('page-study').classList.contains('active')) return;
+  if (e.code==='Space'||e.code==='Enter'){e.preventDefault();flip();}
+  if (e.key==='1') rate(1); if (e.key==='2') rate(2);
+  if (e.key==='3') rate(3); if (e.key==='4') rate(4);
+});
+
+// ══════════════════════════════
+//  EDITOR
+// ══════════════════════════════
+let eDeckId=null, eCaseId=null, eCardId=null, sideTab='cases';
+
+function renderEditor() {
+  const sel = document.getElementById('ed-deck');
+  const prev = sel.value;
+  sel.innerHTML=(db.decks||[]).map(d=>`<option value="${d.id}">${esc(d.name)}</option>`).join('');
+  if (prev && (db.decks||[]).find(d=>d.id===prev)) sel.value=prev;
+  eDeckId = sel.value || ((db.decks||[])[0]||{}).id || null;
+  if (eDeckId) sel.value=eDeckId;
+  renderSidebar();
+}
+
+function onDeckChange() { eDeckId=document.getElementById('ed-deck').value; eCaseId=null; eCardId=null; renderSidebar(); showEmptyPanel(); }
+
+function setSideTab(mode, el) {
+  sideTab=mode;
+  document.querySelectorAll('.stab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderSidebar();
+}
+
+function renderSidebar() {
+  const body=document.getElementById('side-body');
+  if (!eDeckId){body.innerHTML='';return;}
+  if (sideTab==='cases') {
+    const cases=(db.cases||[]).filter(cs=>cs.deckId===eDeckId);
+    let h=`<div class="side-hdr">Cases <span>${cases.length}</span><button class="addbtn" onclick="addCase()">+</button></div>`;
+    if (!cases.length) h+='<div style="padding:14px 13px;font-size:11px;color:var(--muted)">No cases yet.</div>';
+    h+=cases.map(cs=>{
+      const cc=(db.cards||[]).filter(c=>c.caseId===cs.id);
+      const open=cs.id===eCaseId;
+      return `<div class="case-item${open?' open':''}" id="ci-${cs.id}">
+        <div class="case-hdr" onclick="toggleCase('${cs.id}')">
+          <span class="exp">▶</span>
+          <span class="case-t">${esc(cs.title)}</span>
+          <span class="case-n">${cc.length}</span>
+        </div>
+        <div class="case-cards-list">
+          ${cc.map(c=>`<div class="crd-row${c.id===eCardId?' sel':''}" onclick="selCard('${c.id}','${cs.id}')">
+            <span class="crd-q">${esc(c.q)}</span>
+            <button class="delbtn" onclick="event.stopPropagation();delCard('${c.id}')">×</button>
+          </div>`).join('')}
+          <div class="crd-row" onclick="addCard('${cs.id}')" style="color:var(--a3);cursor:pointer">+ Add card</div>
+        </div>
+      </div>`;
+    }).join('');
+    body.innerHTML=h;
+  } else {
+    const cards=(db.cards||[]).filter(c=>c.deckId===eDeckId);
+    let h=`<div class="side-hdr">All Cards <span>${cards.length}</span></div>`;
+    h+=cards.map((c,i)=>`<div class="crd-row${c.id===eCardId?' sel':''}" onclick="selCard('${c.id}',null)" style="padding-left:13px">
+      <span style="font-size:10px;color:var(--muted);flex-shrink:0">${String(i+1).padStart(2,'0')}</span>
+      <span class="crd-q">${esc(c.q)}</span>
+      <button class="delbtn" onclick="event.stopPropagation();delCard('${c.id}')">×</button>
+    </div>`).join('');
+    if (!cards.length) h+='<div style="padding:14px 13px;font-size:11px;color:var(--muted)">No cards yet.</div>';
+    body.innerHTML=h;
+  }
+}
+
+function toggleCase(id) {
+  eCaseId = eCaseId===id ? null : id; eCardId=null;
+  renderSidebar();
+  if (eCaseId) showCasePanel(id); else showEmptyPanel();
+}
+
+function selCard(cid,csid) {
+  eCardId=cid; if(csid) eCaseId=csid;
+  renderSidebar(); showCardPanel(cid);
+}
+
+function showEmptyPanel() {
+  document.getElementById('ed-main').innerHTML='<div class="empty-p"><div class="epi">🗂</div><div>Select a case or card</div></div>';
+}
+
+function showCasePanel(id) {
+  const cs=(db.cases||[]).find(c=>c.id===id); if(!cs)return;
+  document.getElementById('ed-main').innerHTML=`
+    <div class="ef"><label class="el">Case Title</label>
+      <input class="ei" id="ei-title" value="${esc(cs.title)}" oninput="saveCase('${id}','title',this.value)" placeholder="e.g. Acute MI"></div>
+    <div class="ef"><label class="el">Clinical Vignette / Stem</label>
+      <textarea class="eta tall" id="ei-stem" oninput="saveCase('${id}','stem',this.value)" placeholder="A 58-year-old presents with…">${esc(cs.stem)}</textarea></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-sm btn-p" onclick="addCard('${id}')">+ Add Card</button>
+      <button class="btn btn-sm" style="color:var(--red)" onclick="delCase('${id}')">Delete Case</button>
+    </div>`;
+}
+
+function showCardPanel(id) {
+  const c=(db.cards||[]).find(x=>x.id===id); if(!c)return;
+  const cs=c.caseId?(db.cases||[]).find(x=>x.id===c.caseId):null;
+  document.getElementById('ed-main').innerHTML=`
+    ${cs?`<div style="font-size:11px;color:var(--a2)">Case: ${esc(cs.title)}</div>`:''}
+    <div class="ef"><label class="el">Front — Question</label>
+      <textarea class="eta" oninput="saveCard('${id}','q',this.value)">${esc(c.q)}</textarea></div>
+    <div class="ef"><label class="el">Back — Answer</label>
+      <textarea class="eta tall" oninput="saveCard('${id}','a',this.value)">${esc(c.a)}</textarea></div>
+    <div class="card-meta">
+      <span>State: <span class="tag-${c.state}">${c.state}</span></span>
+      <span>Reps: ${c.reps}</span>
+      <span>Stability: ${c.stab.toFixed(1)}d</span>
+      <span>Due: ${c.due}</span>
+    </div>
+    <button class="btn btn-sm" onclick="resetCard('${id}')">Reset Progress</button>`;
+}
+
+function addCase() {
+  if(!eDeckId)return;
+  const cs={id:uid('cs'),deckId:eDeckId,title:'New Case',stem:''};
+  if(!db.cases)db.cases=[];
+  db.cases.push(cs); eCaseId=cs.id; eCardId=null;
+  save(); renderSidebar(); showCasePanel(cs.id);
+  setTimeout(()=>{const t=document.getElementById('ei-title');if(t){t.focus();t.select();}},50);
+}
+
+function addCard(csId) {
+  if(!eDeckId)return;
+  const c=mkCard(uid('c'),eDeckId,csId,'New Question','New Answer');
+  if(!db.cards)db.cards=[];
+  db.cards.push(c); eCaseId=csId; eCardId=c.id;
+  save(); renderSidebar(); showCardPanel(c.id);
+}
+
+function delCase(id) {
+  if(!confirm('Delete this case and all its cards?'))return;
+  db.cases=(db.cases||[]).filter(c=>c.id!==id);
+  db.cards=(db.cards||[]).filter(c=>c.caseId!==id);
+  eCaseId=null; eCardId=null;
+  save(); renderSidebar(); showEmptyPanel();
+}
+
+function delCard(id) {
+  if(!confirm('Delete this card?'))return;
+  db.cards=(db.cards||[]).filter(c=>c.id!==id);
+  if(eCardId===id){eCardId=null;showEmptyPanel();}
+  save(); renderSidebar();
+}
+
+function saveCase(id,field,val) {
+  const i=(db.cases||[]).findIndex(c=>c.id===id);
+  if(i!==-1){db.cases[i][field]=val;save();}
+  if(field==='title')renderSidebar();
+}
+
+function saveCard(id,field,val) {
+  const i=(db.cards||[]).findIndex(c=>c.id===id);
+  if(i!==-1){db.cards[i][field]=val;save();}
+  if(field==='q')renderSidebar();
+}
+
+function resetCard(id) {
+  const i=(db.cards||[]).findIndex(c=>c.id===id);
+  if(i===-1)return;
+  Object.assign(db.cards[i],{state:'new',due:TODAY,stab:1,diff:5,reps:0,lapses:0,rated:null});
+  save(); showCardPanel(id);
+}
+
+// ══════════════════════════════
+//  DECK MANAGEMENT
+// ══════════════════════════════
+function createDeck() {
+  const name=document.getElementById('new-deck-name').value.trim();
+  if(!name)return;
+  db.decks.push({id:uid('d'),name,stemMode:'once',newLimit:20});
+  save(); closeModal('modal-deck'); renderDash(); renderEditor();
+}
+
+function deleteDeck() {
+  if(!eDeckId)return;
+  const deck=(db.decks||[]).find(d=>d.id===eDeckId);
+  if(!deck||!confirm(`Delete "${deck.name}" and all its content?`))return;
+  db.decks=(db.decks||[]).filter(d=>d.id!==eDeckId);
+  db.cases=(db.cases||[]).filter(c=>c.deckId!==eDeckId);
+  db.cards=(db.cards||[]).filter(c=>c.deckId!==eDeckId);
+  eDeckId=null; eCaseId=null; eCardId=null;
+  save(); renderEditor(); renderDash();
+}
+
+let settingsDeckId=null;
+function openDeckSettings() {
+  if(!eDeckId)return;
+  settingsDeckId=eDeckId;
+  const d=(db.decks||[]).find(x=>x.id===eDeckId);
+  if(!d)return;
+  document.getElementById('settings-title').textContent=d.name+' — Settings';
+  document.getElementById('new-limit').value=d.newLimit||20;
+  const m=d.stemMode||'once';
+  document.getElementById('tog-once').classList.toggle('active',m==='once');
+  document.getElementById('tog-always').classList.toggle('active',m==='always');
+  openModal('modal-settings');
+}
+function setStemMode(m) {
+  document.getElementById('tog-once').classList.toggle('active',m==='once');
+  document.getElementById('tog-always').classList.toggle('active',m==='always');
+}
+function saveDeckSettings() {
+  const d=(db.decks||[]).find(x=>x.id===settingsDeckId);
+  if(!d)return;
+  d.stemMode=document.getElementById('tog-once').classList.contains('active')?'once':'always';
+  d.newLimit=parseInt(document.getElementById('new-limit').value)||20;
+  save(); closeModal('modal-settings');
+}
+
+// ══════════════════════════════
+//  PROGRESS
+// ══════════════════════════════
+function renderProgress() {
+  const days=['S','M','T','W','T','F','S'];
+  const week=[];
+  for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);week.push({l:days[d.getDay()],n:(db.log||{})[d.toISOString().slice(0,10)]||0});}
+  const mx=Math.max(...week.map(w=>w.n),1);
+  document.getElementById('bar-chart').innerHTML=week.map((w,i)=>
+    `<div class="bc"><div class="bar ${i===6?'y':i>=4?'o':'g'}" style="height:${Math.max(3,w.n/mx*82)}px" title="${w.n}"></div><div class="bday">${w.l}</div></div>`
+  ).join('');
+
+  let h='';
+  for(let i=27;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const c=(db.log||{})[d.toISOString().slice(0,10)]||0;h+=`<div class="hc ${c===0?'':c<5?'l1':c<15?'l2':c<30?'l3':'l4'}" title="${c} reviews"></div>`;}
+  document.getElementById('heatmap').innerHTML=h;
+
+  const st={new:0,learning:0,review:0,relearn:0};
+  (db.cards||[]).forEach(c=>{if(st[c.state]!==undefined)st[c.state]++;});
+  const tot=(db.cards||[]).length||1;
+  const cl={new:'var(--a3)',learning:'var(--a2)',review:'var(--green)',relearn:'var(--red)'};
+  document.getElementById('st-dist').innerHTML=Object.entries(st).map(([s,n])=>
+    `<div class="st-row"><span class="st-nm tag-${s}">${s}</span><div class="st-trk"><div class="st-fill" style="width:${Math.round(n/tot*100)}%;background:${cl[s]}"></div></div><span class="st-n">${n}</span></div>`
+  ).join('');
+
+  document.getElementById('deck-pg').innerHTML=(db.decks||[]).map(deck=>{
+    const dc=(db.cards||[]).filter(c=>c.deckId===deck.id);
+    const due=dc.filter(c=>c.due<=TODAY&&c.state!=='new').length;
+    const nw=dc.filter(c=>c.state==='new').length;
+    return `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px">
+      <span>${esc(deck.name)}</span>
+      <span style="color:var(--muted)">${dc.length} &middot; <span style="color:var(--a2)">${due} due</span> &middot; <span style="color:var(--a3)">${nw} new</span></span>
+    </div>`;
+  }).join('')||'<div style="color:var(--muted);font-size:12px;padding-top:10px">No decks.</div>';
+}
+
+// ══════════════════════════════
+//  MODALS
+// ══════════════════════════════
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+  if(id==='modal-deck') setTimeout(()=>document.getElementById('new-deck-name').focus(),50);
+}
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',function(e){if(e.target===this)closeModal(this.id);}));
+
+// ══════════════════════════════
+//  UTILS
+// ══════════════════════════════
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ══════════════════════════════
+//  BOOT
+// ══════════════════════════════
+applyTheme();
+renderDash();
+</script>
+</body>
+</html>
