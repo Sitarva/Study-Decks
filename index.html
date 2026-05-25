@@ -1,1 +1,2064 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>MedDeck</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;700;800&family=Literata:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+/* ═══════════════════════════════════════
+   CSS VARIABLES — DARK (RETRO) THEME
+═══════════════════════════════════════ */
+:root {
+  --bg: #0d0d0d;
+  --surface: #141414;
+  --card-bg: #1a1a1a;
+  --border: #2a2a2a;
+  --border-light: #333;
+  --accent: #c8f135;
+  --accent2: #f1a435;
+  --accent3: #35c8f1;
+  --text: #e8e8e0;
+  --text-dim: #888;
+  --text-muted: #444;
+  --red: #f13535;
+  --green: #35f179;
+  --mono: 'Space Mono', monospace;
+  --sans: 'Syne', sans-serif;
+  --serif: 'Literata', Georgia, serif;
+  --radius: 0px;
+  --shadow: none;
+  --nav-height: 56px;
+  --scanlines: 1;
+}
 
+body.theme-light {
+  --bg: #f5f0e8;
+  --surface: #ede8df;
+  --card-bg: #faf7f2;
+  --border: #d8d0c4;
+  --border-light: #c8bfb0;
+  --accent: #2d6a4f;
+  --accent2: #c77c2a;
+  --accent3: #1a6b8a;
+  --text: #1a1814;
+  --text-dim: #5a5248;
+  --text-muted: #9a9088;
+  --red: #c0392b;
+  --green: #27ae60;
+  --radius: 4px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+  --scanlines: 0;
+}
+
+/* ═══════════════════════════════════════
+   RESET & BASE
+═══════════════════════════════════════ */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+html { font-size: 16px; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--mono);
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background 0.3s, color 0.3s;
+}
+
+/* Scanlines — dark only */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 2px,
+    rgba(0,0,0,0.07) 2px, rgba(0,0,0,0.07) 4px
+  );
+  pointer-events: none;
+  z-index: 1000;
+  opacity: var(--scanlines);
+  transition: opacity 0.3s;
+}
+
+/* Grid bg — dark only */
+body.theme-dark::after {
+  content: '';
+  position: fixed; inset: 0;
+  background-image:
+    linear-gradient(rgba(200,241,53,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200,241,53,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Light theme paper texture */
+body.theme-light::after {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+.app { position: relative; z-index: 1; display: flex; flex-direction: column; min-height: 100vh; }
+
+/* ═══════════════════════════════════════
+   AUTH SCREEN
+═══════════════════════════════════════ */
+#auth-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.auth-box {
+  width: 100%;
+  max-width: 400px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  padding: 40px;
+}
+
+.auth-logo {
+  font-family: var(--sans);
+  font-weight: 800;
+  font-size: 28px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.auth-logo-badge {
+  background: var(--accent);
+  color: #000;
+  font-size: 9px;
+  font-family: var(--mono);
+  font-weight: 700;
+  padding: 2px 6px;
+  letter-spacing: 2px;
+}
+
+.auth-sub {
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  margin-bottom: 32px;
+  text-transform: uppercase;
+}
+
+.auth-tabs {
+  display: flex;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.auth-tab {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 10px 16px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s;
+  margin-bottom: -1px;
+}
+
+.auth-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+.auth-form { display: flex; flex-direction: column; gap: 14px; }
+
+.auth-field { display: flex; flex-direction: column; gap: 6px; }
+
+.auth-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); }
+
+.auth-input {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 14px;
+  padding: 10px 14px;
+  outline: none;
+  transition: border-color 0.15s;
+  width: 100%;
+  border-radius: var(--radius);
+}
+
+.auth-input:focus { border-color: var(--accent); }
+
+.auth-error {
+  font-size: 11px;
+  color: var(--red);
+  background: rgba(241,53,53,0.08);
+  border: 1px solid rgba(241,53,53,0.2);
+  padding: 8px 12px;
+  display: none;
+}
+
+.auth-error.show { display: block; }
+
+.auth-success {
+  font-size: 11px;
+  color: var(--green);
+  background: rgba(53,241,121,0.08);
+  border: 1px solid rgba(53,241,121,0.2);
+  padding: 8px 12px;
+  display: none;
+}
+
+.auth-success.show { display: block; }
+
+/* ═══════════════════════════════════════
+   HEADER
+═══════════════════════════════════════ */
+header {
+  border-bottom: 1px solid var(--border);
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(13,13,13,0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  transition: background 0.3s, border-color 0.3s;
+}
+
+body.theme-light header {
+  background: rgba(245,240,232,0.92);
+}
+
+.logo {
+  font-family: var(--sans);
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: -0.5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo-badge {
+  background: var(--accent);
+  color: #000;
+  font-size: 9px;
+  font-family: var(--mono);
+  font-weight: 700;
+  padding: 2px 5px;
+  letter-spacing: 2px;
+  border-radius: var(--radius);
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-email {
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+  display: none;
+}
+
+/* ═══════════════════════════════════════
+   BUTTONS
+═══════════════════════════════════════ */
+.btn {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: all 0.15s;
+  border-radius: var(--radius);
+  white-space: nowrap;
+}
+
+.btn:hover { border-color: var(--accent); color: var(--accent); }
+
+.btn-primary {
+  background: var(--accent);
+  color: #000;
+  border-color: var(--accent);
+  font-weight: 700;
+}
+
+.btn-primary:hover { opacity: 0.85; }
+
+.btn-sm {
+  font-size: 10px;
+  padding: 5px 10px;
+}
+
+.btn-danger:hover { border-color: var(--red); color: var(--red); }
+
+.btn-icon {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-dim);
+  cursor: pointer;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  transition: all 0.15s;
+  border-radius: var(--radius);
+}
+
+.btn-icon:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Theme toggle */
+.theme-toggle {
+  font-size: 16px;
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  border-radius: var(--radius);
+}
+
+.theme-toggle:hover { border-color: var(--accent); }
+
+/* ═══════════════════════════════════════
+   DESKTOP NAV TABS
+═══════════════════════════════════════ */
+.nav-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.nav-tabs::-webkit-scrollbar { display: none; }
+
+.tab {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 13px 18px;
+  cursor: pointer;
+  color: var(--text-muted);
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s;
+  background: none;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.tab:hover { color: var(--text-dim); }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* ═══════════════════════════════════════
+   MOBILE BOTTOM NAV
+═══════════════════════════════════════ */
+.mobile-nav {
+  display: none;
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: var(--nav-height);
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  z-index: 200;
+  padding: 0 4px;
+  align-items: stretch;
+}
+
+.mobile-nav-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: color 0.15s;
+  padding: 6px 0;
+}
+
+.mobile-nav-btn .nav-icon { font-size: 18px; line-height: 1; }
+.mobile-nav-btn.active { color: var(--accent); }
+
+/* ═══════════════════════════════════════
+   MAIN CONTENT
+═══════════════════════════════════════ */
+.main-content {
+  flex: 1;
+  padding: 28px 24px;
+  max-width: 1080px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.page { display: none; }
+.page.active { display: block; }
+
+/* ═══════════════════════════════════════
+   SECTION HEADERS
+═══════════════════════════════════════ */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.section-title {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ═══════════════════════════════════════
+   DASHBOARD
+═══════════════════════════════════════ */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  margin-bottom: 28px;
+}
+
+.stat-box {
+  background: var(--surface);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: background 0.3s;
+}
+
+.stat-label {
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.stat-value {
+  font-family: var(--sans);
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.stat-value.green { color: var(--green); }
+.stat-value.yellow { color: var(--accent); }
+.stat-value.orange { color: var(--accent2); }
+.stat-value.blue { color: var(--accent3); }
+.stat-sub { font-size: 10px; color: var(--text-muted); }
+
+/* Deck list */
+.deck-list { display: flex; flex-direction: column; gap: 1px; background: var(--border); border: 1px solid var(--border); }
+
+.deck-row {
+  background: var(--surface);
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  transition: background 0.1s;
+  flex-wrap: wrap;
+}
+
+.deck-row:hover { background: var(--card-bg); }
+
+.deck-info { flex: 1; min-width: 0; }
+.deck-name { font-family: var(--sans); font-weight: 700; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.deck-meta { font-size: 10px; color: var(--text-muted); margin-top: 2px; letter-spacing: 0.5px; }
+
+.deck-counts { display: flex; gap: 14px; flex-shrink: 0; }
+
+.deck-count {
+  font-size: 11px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 36px;
+}
+
+.deck-count .dc-val { font-family: var(--sans); font-weight: 800; font-size: 20px; line-height: 1; }
+.deck-count .dc-lbl { font-size: 9px; letter-spacing: 1px; color: var(--text-muted); text-transform: uppercase; }
+.due .dc-val { color: var(--accent2); }
+.new-c .dc-val { color: var(--accent3); }
+.rev .dc-val { color: var(--green); }
+
+.study-btn {
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 8px 16px;
+  background: var(--accent);
+  color: #000;
+  border: none;
+  cursor: pointer;
+  font-family: var(--mono);
+  font-weight: 700;
+  transition: opacity 0.15s;
+  flex-shrink: 0;
+  border-radius: var(--radius);
+}
+
+.study-btn:hover { opacity: 0.85; }
+.study-btn:disabled { background: var(--border); color: var(--text-muted); cursor: default; opacity: 1; }
+
+.deck-actions { display: flex; gap: 6px; flex-shrink: 0; }
+
+/* ═══════════════════════════════════════
+   STUDY VIEW
+═══════════════════════════════════════ */
+.study-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.study-deck-name {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--text-dim);
+  flex-shrink: 0;
+}
+
+.progress-bar-wrap {
+  flex: 1;
+  min-width: 80px;
+  height: 2px;
+  background: var(--border);
+  position: relative;
+}
+
+.progress-bar-fill {
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  background: var(--accent);
+  transition: width 0.4s ease;
+}
+
+.card-counter { font-size: 11px; color: var(--text-muted); letter-spacing: 1px; flex-shrink: 0; }
+
+/* STEM PANEL */
+.stem-panel {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  padding: 20px 24px;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.stem-panel::before {
+  content: 'CASE STEM';
+  position: absolute;
+  top: -1px; left: 16px;
+  background: var(--accent2);
+  color: #000;
+  font-size: 9px;
+  font-family: var(--mono);
+  font-weight: 700;
+  letter-spacing: 2px;
+  padding: 1px 6px;
+}
+
+.stem-text {
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--text);
+  margin-top: 8px;
+}
+
+/* CARD FLIP */
+.card-scene {
+  perspective: 1200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  min-height: 280px;
+  margin-bottom: 20px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.card-3d {
+  width: 100%;
+  max-width: 660px;
+  height: 300px;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-3d.flipped { transform: rotateY(180deg); }
+
+.card-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  display: flex;
+  flex-direction: column;
+  padding: 32px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  transition: background 0.3s, border-color 0.3s;
+}
+
+.card-face::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 20% 20%, rgba(200,241,53,0.03) 0%, transparent 55%);
+  pointer-events: none;
+  border-radius: var(--radius);
+}
+
+body.theme-light .card-face::before {
+  background: radial-gradient(ellipse at 80% 20%, rgba(45,106,79,0.04) 0%, transparent 55%);
+}
+
+.card-back { transform: rotateY(180deg); }
+
+.card-side-label {
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-side-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+.card-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  overflow-y: auto;
+}
+
+.card-question {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.card-answer {
+  font-family: var(--serif);
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--text);
+}
+
+.card-hint {
+  font-size: 10px;
+  color: var(--text-muted);
+  text-align: center;
+  letter-spacing: 1px;
+  margin-top: 12px;
+}
+
+/* RATING BUTTONS */
+.rating-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.25s, transform 0.25s;
+  pointer-events: none;
+}
+
+.rating-row.visible { opacity: 1; transform: translateY(0); pointer-events: all; }
+
+.rating-btn {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 12px 6px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  border-radius: var(--radius);
+}
+
+.rating-btn .rl { font-size: 12px; font-weight: 700; }
+.rating-btn .ri { font-size: 10px; color: var(--text-muted); }
+
+.rating-btn.again:hover { border-color: var(--red); color: var(--red); background: rgba(241,53,53,0.05); }
+.rating-btn.hard:hover { border-color: var(--accent2); color: var(--accent2); background: rgba(241,164,53,0.05); }
+.rating-btn.good:hover { border-color: var(--accent); color: var(--accent); background: rgba(200,241,53,0.05); }
+.rating-btn.easy:hover { border-color: var(--green); color: var(--green); background: rgba(53,241,121,0.05); }
+
+/* Done state */
+.done-state { text-align: center; padding: 60px 24px; }
+.done-icon { font-size: 52px; margin-bottom: 16px; }
+.done-state h2 { font-family: var(--sans); font-weight: 800; font-size: 28px; margin-bottom: 8px; color: var(--accent); }
+.done-state p { font-size: 12px; color: var(--text-muted); letter-spacing: 1px; margin-bottom: 24px; }
+
+/* ═══════════════════════════════════════
+   EDITOR
+═══════════════════════════════════════ */
+.editor-top-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.editor-deck-select {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 12px;
+  padding: 7px 12px;
+  outline: none;
+  cursor: pointer;
+  -webkit-appearance: none;
+  border-radius: var(--radius);
+}
+
+.editor-grid {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  min-height: 480px;
+}
+
+.editor-sidebar {
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.sidebar-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+}
+
+.sidebar-tab {
+  flex: 1;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 10px 6px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s;
+  margin-bottom: -1px;
+}
+
+.sidebar-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+.sidebar-body { flex: 1; overflow-y: auto; }
+
+.sidebar-section-header {
+  padding: 10px 14px;
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.add-btn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--accent);
+  cursor: pointer;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  line-height: 1;
+  padding-bottom: 1px;
+  transition: all 0.15s;
+  border-radius: var(--radius);
+}
+
+.add-btn:hover { background: var(--accent); color: #000; border-color: var(--accent); }
+
+/* Case items */
+.case-item {
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.case-item-header {
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.case-item:hover .case-item-header { background: rgba(200,241,53,0.03); }
+.case-item.selected .case-item-header { background: rgba(200,241,53,0.06); }
+
+.case-expander { font-size: 10px; color: var(--text-muted); transition: transform 0.2s; flex-shrink: 0; }
+.case-item.open .case-expander { transform: rotate(90deg); }
+
+.case-title-text { font-size: 12px; color: var(--text-dim); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.case-card-count { font-size: 10px; color: var(--text-muted); flex-shrink: 0; }
+
+.case-cards { display: none; background: var(--bg); }
+.case-item.open .case-cards { display: block; }
+
+.card-sub-item {
+  padding: 8px 14px 8px 32px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--text-muted);
+  transition: background 0.1s;
+}
+
+.card-sub-item:hover { background: rgba(200,241,53,0.03); color: var(--text-dim); }
+.card-sub-item.selected { color: var(--accent); border-left: 2px solid var(--accent); }
+.card-sub-q { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.card-del-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 13px; opacity: 0; transition: opacity 0.15s, color 0.15s; flex-shrink: 0; }
+.card-sub-item:hover .card-del-btn { opacity: 1; }
+.card-del-btn:hover { color: var(--red); }
+
+/* Editor main panel */
+.editor-main {
+  background: var(--card-bg);
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-y: auto;
+}
+
+.editor-field { display: flex; flex-direction: column; gap: 7px; }
+
+.editor-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); }
+
+.editor-input, .editor-textarea {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--serif);
+  font-size: 14px;
+  padding: 10px 14px;
+  outline: none;
+  transition: border-color 0.15s;
+  resize: none;
+  line-height: 1.65;
+  width: 100%;
+  border-radius: var(--radius);
+}
+
+.editor-input:focus, .editor-textarea:focus { border-color: var(--accent); }
+.editor-textarea { height: 110px; }
+.editor-textarea.tall { height: 150px; }
+
+.editor-card-meta { display: flex; gap: 20px; font-size: 11px; color: var(--text-muted); flex-wrap: wrap; }
+
+.empty-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 300px;
+  color: var(--text-muted);
+  font-size: 11px;
+  letter-spacing: 1px;
+  gap: 12px;
+}
+
+.empty-panel .ep-icon { font-size: 40px; opacity: 0.3; }
+
+/* ═══════════════════════════════════════
+   PROGRESS
+═══════════════════════════════════════ */
+.progress-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  margin-bottom: 24px;
+}
+
+.progress-panel { background: var(--surface); padding: 22px; transition: background 0.3s; }
+
+.progress-panel-title { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 18px; }
+
+.bar-chart { display: flex; align-items: flex-end; gap: 5px; height: 90px; }
+.bar-col { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; }
+.bar { width: 100%; background: var(--border); min-height: 3px; transition: height 0.5s ease; border-radius: 1px 1px 0 0; }
+.bar.green { background: var(--green); }
+.bar.yellow { background: var(--accent); }
+.bar.orange { background: var(--accent2); }
+.bar-day { font-size: 9px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+
+.heatmap { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+.heat-cell { aspect-ratio: 1; background: var(--border); border-radius: 1px; transition: background 0.3s; }
+.heat-cell.l1 { background: rgba(200,241,53,0.2); }
+.heat-cell.l2 { background: rgba(200,241,53,0.45); }
+.heat-cell.l3 { background: rgba(200,241,53,0.7); }
+.heat-cell.l4 { background: var(--accent); }
+body.theme-light .heat-cell.l1 { background: rgba(45,106,79,0.2); }
+body.theme-light .heat-cell.l2 { background: rgba(45,106,79,0.45); }
+body.theme-light .heat-cell.l3 { background: rgba(45,106,79,0.7); }
+body.theme-light .heat-cell.l4 { background: var(--accent); }
+
+.state-dist { display: flex; flex-direction: column; gap: 10px; }
+.state-row { display: flex; align-items: center; gap: 10px; font-size: 11px; }
+.state-bar-track { flex: 1; height: 5px; background: var(--border); border-radius: 2px; }
+.state-bar-fill { height: 100%; border-radius: 2px; transition: width 0.6s ease; }
+.state-name { width: 62px; color: var(--text-muted); font-size: 10px; text-transform: uppercase; letter-spacing: 1px; }
+.state-pct { width: 28px; text-align: right; font-size: 10px; }
+
+/* ═══════════════════════════════════════
+   MODAL
+═══════════════════════════════════════ */
+.modal-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.75);
+  z-index: 500;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.modal-overlay.open { display: flex; }
+
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 28px;
+  width: 100%;
+  max-width: 400px;
+  border-radius: var(--radius);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+
+.modal-title { font-family: var(--sans); font-weight: 700; font-size: 18px; margin-bottom: 20px; }
+.modal-actions { display: flex; gap: 8px; margin-top: 20px; flex-wrap: wrap; }
+
+/* Deck settings */
+.deck-settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+  gap: 12px;
+}
+
+.deck-settings-label { font-size: 12px; color: var(--text-dim); }
+.deck-settings-sub { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+
+.toggle-group { display: flex; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.toggle-opt {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 1px;
+  padding: 5px 10px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s;
+  text-transform: uppercase;
+}
+.toggle-opt.active { background: var(--accent); color: #000; font-weight: 700; }
+
+/* ═══════════════════════════════════════
+   MISC
+═══════════════════════════════════════ */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+.tag-new { color: var(--accent3); }
+.tag-learning { color: var(--accent2); }
+.tag-review { color: var(--green); }
+.tag-relearn { color: var(--red); }
+
+.sync-status {
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  display: none;
+}
+
+.sync-status.show { display: inline-block; }
+.sync-status.syncing { color: var(--accent3); border-color: var(--accent3); }
+.sync-status.ok { color: var(--green); border-color: var(--green); }
+.sync-status.err { color: var(--red); border-color: var(--red); }
+
+/* ═══════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════ */
+@media (max-width: 680px) {
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .progress-grid { grid-template-columns: 1fr; }
+
+  .nav-tabs { display: none; }
+  .mobile-nav { display: flex; }
+  .user-email { display: none !important; }
+
+  .main-content { padding: 16px 14px; padding-bottom: calc(var(--nav-height) + 16px); }
+
+  .deck-counts { gap: 8px; }
+  .deck-count .dc-val { font-size: 16px; }
+
+  .editor-grid { grid-template-columns: 1fr; }
+  .editor-sidebar { max-height: 260px; }
+
+  .card-3d { height: 260px; }
+  .card-face { padding: 22px; }
+  .card-question { font-size: 18px; }
+  .card-answer { font-size: 14px; }
+
+  .rating-row { grid-template-columns: repeat(2, 1fr); }
+
+  .modal { padding: 22px; }
+
+  .stat-value { font-size: 26px; }
+}
+
+@media (max-width: 380px) {
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .deck-row { gap: 10px; }
+  .deck-counts { display: none; }
+}
+</style>
+</head>
+<body class="theme-dark">
+<div class="app">
+
+<!-- ═══════════ AUTH SCREEN ═══════════ -->
+<div id="auth-screen">
+  <div class="auth-box">
+    <div class="auth-logo">MedDeck <span class="auth-logo-badge">FSRS</span></div>
+    <div class="auth-sub">Spaced repetition for medicine</div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchAuthTab('login')">Log In</button>
+      <button class="auth-tab" onclick="switchAuthTab('signup')">Sign Up</button>
+    </div>
+    <div class="auth-form">
+      <div class="auth-field">
+        <label class="auth-label">Email</label>
+        <input class="auth-input" id="auth-email" type="email" placeholder="you@example.com" autocomplete="email">
+      </div>
+      <div class="auth-field">
+        <label class="auth-label">Password</label>
+        <input class="auth-input" id="auth-password" type="password" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <div class="auth-error" id="auth-error"></div>
+      <div class="auth-success" id="auth-success"></div>
+      <button class="btn btn-primary" id="auth-submit-btn" onclick="handleAuth()">Log In</button>
+      <div id="auth-offline-note" style="font-size:10px;color:var(--text-muted);text-align:center;margin-top:4px">
+        No Supabase configured — <span style="color:var(--accent3);cursor:pointer;text-decoration:underline" onclick="enterOfflineMode()">continue offline</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ MAIN APP ═══════════ -->
+<div id="main-app" style="display:none; flex-direction:column; min-height:100vh;">
+
+  <header>
+    <div class="logo">MedDeck <span class="logo-badge">FSRS</span></div>
+    <div class="header-right">
+      <span class="sync-status" id="sync-status"></span>
+      <span class="user-email" id="user-email-display" style="display:none"></span>
+      <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme" id="theme-btn">☀️</button>
+      <button class="btn btn-sm" onclick="openNewDeckModal()">+ Deck</button>
+      <button class="btn btn-sm btn-danger" onclick="handleLogout()">Exit</button>
+    </div>
+  </header>
+
+  <nav class="nav-tabs">
+    <button class="tab active" data-page="dashboard" onclick="showPage('dashboard',this)">Dashboard</button>
+    <button class="tab" data-page="study" onclick="showPage('study',this)">Study</button>
+    <button class="tab" data-page="editor" onclick="showPage('editor',this)">Cards</button>
+    <button class="tab" data-page="progress" onclick="showPage('progress',this)">Progress</button>
+  </nav>
+
+  <div class="main-content">
+
+    <!-- DASHBOARD -->
+    <div id="page-dashboard" class="page active">
+      <div class="stats-grid">
+        <div class="stat-box"><div class="stat-label">Due Today</div><div class="stat-value yellow" id="stat-due">0</div><div class="stat-sub">cards waiting</div></div>
+        <div class="stat-box"><div class="stat-label">New Cards</div><div class="stat-value blue" id="stat-new">0</div><div class="stat-sub">to introduce</div></div>
+        <div class="stat-box"><div class="stat-label">Streak</div><div class="stat-value green" id="stat-streak">0</div><div class="stat-sub">days</div></div>
+        <div class="stat-box"><div class="stat-label">Total Cards</div><div class="stat-value orange" id="stat-total">0</div><div class="stat-sub">in collection</div></div>
+      </div>
+      <div class="section-header">
+        <div class="section-title">Your Decks</div>
+        <button class="btn btn-sm btn-primary" onclick="startMixedStudy()" id="study-all-btn">Study All Due →</button>
+      </div>
+      <div class="deck-list" id="deck-list"></div>
+    </div>
+
+    <!-- STUDY -->
+    <div id="page-study" class="page">
+      <div id="study-inner"></div>
+    </div>
+
+    <!-- EDITOR -->
+    <div id="page-editor" class="page">
+      <div class="editor-top-bar">
+        <div class="section-title" style="margin:0">Deck:</div>
+        <select class="editor-deck-select" id="editor-deck-select" onchange="onEditorDeckChange()"></select>
+        <button class="btn btn-sm" onclick="openDeckSettings()" title="Deck settings">⚙ Settings</button>
+        <div style="flex:1"></div>
+        <button class="btn btn-sm btn-danger" onclick="deleteDeck()">Delete Deck</button>
+      </div>
+      <div class="editor-grid">
+        <div class="editor-sidebar">
+          <div class="sidebar-tabs">
+            <button class="sidebar-tab active" onclick="switchSidebarTab('cases',this)">Cases</button>
+            <button class="sidebar-tab" onclick="switchSidebarTab('all',this)">All Cards</button>
+          </div>
+          <div class="sidebar-body" id="sidebar-body"></div>
+        </div>
+        <div class="editor-main" id="editor-main">
+          <div class="empty-panel"><div class="ep-icon">🗂</div><div>Select or create a case</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROGRESS -->
+    <div id="page-progress" class="page">
+      <div class="progress-grid">
+        <div class="progress-panel"><div class="progress-panel-title">Reviews This Week</div><div class="bar-chart" id="bar-chart"></div></div>
+        <div class="progress-panel"><div class="progress-panel-title">Activity — 28 Days</div><div class="heatmap" id="heatmap"></div></div>
+        <div class="progress-panel"><div class="progress-panel-title">Card States</div><div class="state-dist" id="state-dist"></div></div>
+        <div class="progress-panel"><div class="progress-panel-title">By Deck</div><div id="deck-progress-list"></div></div>
+      </div>
+    </div>
+
+  </div><!-- /main-content -->
+
+  <!-- MOBILE NAV -->
+  <nav class="mobile-nav" id="mobile-nav">
+    <button class="mobile-nav-btn active" data-page="dashboard" onclick="showPage('dashboard',this)"><span class="nav-icon">🏠</span>Home</button>
+    <button class="mobile-nav-btn" data-page="study" onclick="showPage('study',this)"><span class="nav-icon">📚</span>Study</button>
+    <button class="mobile-nav-btn" data-page="editor" onclick="showPage('editor',this)"><span class="nav-icon">✏️</span>Cards</button>
+    <button class="mobile-nav-btn" data-page="progress" onclick="showPage('progress',this)"><span class="nav-icon">📊</span>Progress</button>
+  </nav>
+
+</div><!-- /main-app -->
+</div><!-- /app -->
+
+<!-- MODALS -->
+<div class="modal-overlay" id="modal-new-deck">
+  <div class="modal">
+    <div class="modal-title">New Deck</div>
+    <div class="editor-field">
+      <label class="editor-label">Deck Name</label>
+      <input class="editor-input" id="new-deck-name" placeholder="e.g. Cardiology" onkeydown="if(event.key==='Enter')createDeck()">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" onclick="createDeck()">Create</button>
+      <button class="btn" onclick="closeModal('modal-new-deck')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-deck-settings">
+  <div class="modal">
+    <div class="modal-title" id="ds-title">Deck Settings</div>
+    <div class="deck-settings-row">
+      <div>
+        <div class="deck-settings-label">Stem display mode</div>
+        <div class="deck-settings-sub">How case stems appear during study</div>
+      </div>
+      <div class="toggle-group">
+        <button class="toggle-opt active" id="stem-once-btn" onclick="setDeckStemMode('once')">Once</button>
+        <button class="toggle-opt" id="stem-always-btn" onclick="setDeckStemMode('always')">Always</button>
+      </div>
+    </div>
+    <div class="deck-settings-row">
+      <div>
+        <div class="deck-settings-label">Daily new card limit</div>
+        <div class="deck-settings-sub">Max new cards introduced per day</div>
+      </div>
+      <input class="editor-input" id="new-card-limit" type="number" min="1" max="100" value="20" style="width:70px;padding:6px 10px;text-align:center">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" onclick="saveDeckSettings()">Save</button>
+      <button class="btn" onclick="closeModal('modal-deck-settings')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+// ═══════════════════════════════════════════════
+//  CONFIG — Replace with your Supabase credentials
+// ═══════════════════════════════════════════════
+const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+
+let supabase = null;
+let currentUser = null;
+let isOffline = false;
+
+function initSupabase() {
+  if (SUPABASE_URL === 'YOUR_SUPABASE_URL') return false;
+  try {
+    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    return true;
+  } catch(e) { return false; }
+}
+
+// ═══════════════════════════════════════════════
+//  LOCAL DATA MODEL
+// ═══════════════════════════════════════════════
+const LS_KEY = 'meddeck_v2';
+
+function loadLocal() {
+  try { return JSON.parse(localStorage.getItem(LS_KEY)) || defaultData(); }
+  catch { return defaultData(); }
+}
+
+function saveLocal(d) { localStorage.setItem(LS_KEY, JSON.stringify(d)); }
+
+function defaultData() {
+  return {
+    decks: [
+      { id: 'd1', name: 'Cardiology', stemMode: 'once', newLimit: 20 },
+    ],
+    cases: [
+      { id: 'ca1', deckId: 'd1', title: 'Acute Coronary Syndrome', stem: 'A 58-year-old male with a 20-pack-year smoking history presents to the ED with 45 minutes of crushing central chest pain radiating to the left arm, diaphoresis, and nausea. BP 150/90, HR 98, SpO₂ 96% on air. ECG shows 2mm ST elevation in leads II, III, aVF.' },
+    ],
+    cards: [
+      makeCard('c1','d1','ca1','What is the most likely diagnosis?','Inferior STEMI (ST-elevation myocardial infarction), likely due to RCA occlusion given the inferior lead involvement.'),
+      makeCard('c2','d1','ca1','What is the immediate management priority?','Primary PCI (percutaneous coronary intervention) within 90 minutes. Activate the cath lab immediately. Administer aspirin 300mg + P2Y12 inhibitor, anticoagulation, and oxygen if SpO₂ <94%.'),
+      makeCard('c3','d1','ca1','Which vessel is most likely occluded and why?','The right coronary artery (RCA). It supplies the inferior wall of the left ventricle and the ST changes in II, III, aVF reflect inferior wall ischaemia.'),
+    ],
+    reviewLog: {},
+    streak: { lastDate: null, count: 0 },
+    theme: 'dark',
+    sidebarTab: 'cases',
+  };
+}
+
+function makeCard(id, deckId, caseId, q, a) {
+  return {
+    id, deckId, caseId, q, a,
+    state: 'new',
+    due: todayStr(),
+    stability: 1,
+    difficulty: 5,
+    reps: 0,
+    lapses: 0,
+    lastRated: null,
+  };
+}
+
+function uid(prefix='x') { return prefix + Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+function todayStr() { return new Date().toISOString().slice(0,10); }
+const TODAY = todayStr();
+
+let db = loadLocal();
+
+// ═══════════════════════════════════════════════
+//  FSRS-LITE
+// ═══════════════════════════════════════════════
+const FSRS = {
+  initDifficulty(g) { return Math.min(10, Math.max(1, 5 - (g - 3) * 0.72)); },
+  initStability(g)  { return [1, 1, 4, 14][g - 1] || 1; },
+  nextDifficulty(d, g) { return Math.min(10, Math.max(1, d + -0.72*(g-3)*(10-d)/9)); },
+  retrievability(s, days) { return Math.pow(0.9, days / s); },
+  nextStability(s, d, r, g) {
+    if (g < 3) return Math.max(1, s * 0.2);
+    const hp = g===2 ? 0.8 : 1, eb = g===4 ? 1.3 : 1;
+    return s * (Math.exp(1.3) * (11-d) * Math.pow(s,-0.2) * (Math.exp((1-r)*1.0)-1) * hp * eb + 1);
+  },
+  schedule(card, grade) {
+    const now = new Date();
+    const days = card.lastRated ? Math.max(0,(now-new Date(card.lastRated))/86400000) : 0;
+    let s=card.stability, d=card.difficulty, reps=card.reps, lapses=card.lapses, state=card.state;
+    if (state==='new') { d=this.initDifficulty(grade); s=this.initStability(grade); state=grade<3?'learning':'review'; }
+    else { const r=this.retrievability(s,days); d=this.nextDifficulty(d,grade); s=this.nextStability(s,d,r,grade); if(grade<3){lapses++;state='relearn';}else{state='review';} }
+    reps++;
+    const due=new Date(now); due.setDate(due.getDate()+Math.max(1,Math.round(s)));
+    return { stability:s, difficulty:d, reps, lapses, state, due:due.toISOString().slice(0,10), lastRated:now.toISOString() };
+  },
+  intervals(card) {
+    return [1,2,3,4].map(g => {
+      const r=this.schedule(card,g);
+      const days=Math.max(1,Math.round(r.stability));
+      if(days===1)return'1d'; if(days<7)return days+'d'; if(days<30)return Math.round(days/7)+'w'; return Math.round(days/30)+'mo';
+    });
+  }
+};
+
+// ═══════════════════════════════════════════════
+//  SUPABASE SYNC
+// ═══════════════════════════════════════════════
+function setSyncStatus(state, text) {
+  const el = document.getElementById('sync-status');
+  el.className = 'sync-status show ' + state;
+  el.textContent = text;
+  if (state === 'ok') setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+async function syncUp() {
+  if (!supabase || !currentUser || isOffline) return;
+  setSyncStatus('syncing', '↑ Syncing…');
+  try {
+    const payload = { user_id: currentUser.id, data: JSON.stringify(db), updated_at: new Date().toISOString() };
+    const { error } = await supabase.from('user_data').upsert(payload, { onConflict: 'user_id' });
+    if (error) throw error;
+    setSyncStatus('ok', '✓ Synced');
+  } catch(e) { setSyncStatus('err', '✗ Sync error'); }
+}
+
+async function syncDown() {
+  if (!supabase || !currentUser) return;
+  try {
+    const { data, error } = await supabase.from('user_data').select('data').eq('user_id', currentUser.id).single();
+    if (error && error.code !== 'PGRST116') throw error;
+    if (data && data.data) { db = JSON.parse(data.data); saveLocal(db); }
+  } catch(e) { console.warn('Sync down failed', e); }
+}
+
+let syncTimer = null;
+function scheduleSave() {
+  saveLocal(db);
+  clearTimeout(syncTimer);
+  syncTimer = setTimeout(syncUp, 2000);
+}
+
+// ═══════════════════════════════════════════════
+//  AUTH
+// ═══════════════════════════════════════════════
+let authMode = 'login';
+
+function switchAuthTab(mode) {
+  authMode = mode;
+  document.querySelectorAll('.auth-tab').forEach((t,i) => t.classList.toggle('active', (i===0&&mode==='login')||(i===1&&mode==='signup')));
+  document.getElementById('auth-submit-btn').textContent = mode==='login' ? 'Log In' : 'Create Account';
+  document.getElementById('auth-error').classList.remove('show');
+  document.getElementById('auth-success').classList.remove('show');
+}
+
+async function handleAuth() {
+  const email = document.getElementById('auth-email').value.trim();
+  const pw    = document.getElementById('auth-password').value;
+  const errEl = document.getElementById('auth-error');
+  const okEl  = document.getElementById('auth-success');
+  errEl.classList.remove('show'); okEl.classList.remove('show');
+
+  if (!supabase) { enterOfflineMode(); return; }
+  if (!email || !pw) { errEl.textContent='Please fill in both fields.'; errEl.classList.add('show'); return; }
+
+  const btn = document.getElementById('auth-submit-btn');
+  btn.textContent = '…'; btn.disabled = true;
+
+  try {
+    let result;
+    if (authMode === 'login') {
+      result = await supabase.auth.signInWithPassword({ email, password: pw });
+    } else {
+      result = await supabase.auth.signUp({ email, password: pw });
+    }
+
+    if (result.error) { errEl.textContent = result.error.message; errEl.classList.add('show'); }
+    else if (authMode === 'signup' && !result.data.session) {
+      okEl.textContent = 'Check your email to confirm your account, then log in.';
+      okEl.classList.add('show');
+    } else {
+      currentUser = result.data.user;
+      await syncDown();
+      enterApp();
+    }
+  } catch(e) { errEl.textContent = 'An error occurred. Check your connection.'; errEl.classList.add('show'); }
+  finally { btn.textContent = authMode==='login'?'Log In':'Create Account'; btn.disabled=false; }
+}
+
+function enterOfflineMode() {
+  isOffline = true;
+  db = loadLocal();
+  enterApp();
+}
+
+function enterApp() {
+  document.getElementById('auth-screen').style.display = 'none';
+  const app = document.getElementById('main-app');
+  app.style.display = 'flex';
+  if (currentUser) {
+    const el = document.getElementById('user-email-display');
+    el.textContent = currentUser.email;
+    el.style.display = 'inline';
+  }
+  applyTheme(db.theme || 'dark');
+  renderDashboard();
+}
+
+async function handleLogout() {
+  await syncUp();
+  if (supabase) await supabase.auth.signOut();
+  currentUser = null; isOffline = false;
+  document.getElementById('main-app').style.display = 'none';
+  document.getElementById('auth-screen').style.display = 'flex';
+}
+
+// ═══════════════════════════════════════════════
+//  THEME
+// ═══════════════════════════════════════════════
+function applyTheme(t) {
+  document.body.classList.toggle('theme-dark', t==='dark');
+  document.body.classList.toggle('theme-light', t==='light');
+  document.getElementById('theme-btn').textContent = t==='dark' ? '☀️' : '🌙';
+  db.theme = t;
+}
+
+function toggleTheme() {
+  const next = db.theme==='dark' ? 'light' : 'dark';
+  applyTheme(next);
+  scheduleSave();
+}
+
+// ═══════════════════════════════════════════════
+//  NAV
+// ═══════════════════════════════════════════════
+function showPage(name, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab, .mobile-nav-btn').forEach(t => {
+    t.classList.toggle('active', t.dataset.page === name);
+  });
+  document.getElementById('page-' + name).classList.add('active');
+  if (name==='dashboard') renderDashboard();
+  if (name==='study')     renderStudyPage();
+  if (name==='editor')    renderEditor();
+  if (name==='progress')  renderProgress();
+}
+
+// ═══════════════════════════════════════════════
+//  DASHBOARD
+// ═══════════════════════════════════════════════
+function renderDashboard() {
+  const allCards = db.cards || [];
+  const dueCards = allCards.filter(c => c.due <= TODAY && c.state !== 'new');
+  const newCards  = allCards.filter(c => c.state === 'new');
+  document.getElementById('stat-due').textContent   = dueCards.length;
+  document.getElementById('stat-new').textContent   = newCards.length;
+  document.getElementById('stat-total').textContent = allCards.length;
+  document.getElementById('stat-streak').textContent = (db.streak||{}).count || 0;
+
+  const studyAllBtn = document.getElementById('study-all-btn');
+  studyAllBtn.disabled = dueCards.length + newCards.length === 0;
+
+  const list = document.getElementById('deck-list');
+  if (!db.decks || db.decks.length === 0) {
+    list.innerHTML = '<div style="padding:40px;text-align:center;font-size:11px;color:var(--text-muted)">No decks yet. Press + Deck above.</div>';
+    return;
+  }
+
+  list.innerHTML = db.decks.map(deck => {
+    const cards = allCards.filter(c => c.deckId === deck.id);
+    const due   = cards.filter(c => c.due <= TODAY && c.state !== 'new').length;
+    const newC  = cards.filter(c => c.state === 'new').length;
+    const rev   = cards.filter(c => c.state === 'review').length;
+    const cases = (db.cases||[]).filter(cs => cs.deckId === deck.id).length;
+    return `<div class="deck-row" onclick="startStudy('${deck.id}')">
+      <div class="deck-info">
+        <div class="deck-name">${escHtml(deck.name)}</div>
+        <div class="deck-meta">${cards.length} cards · ${cases} cases</div>
+      </div>
+      <div class="deck-counts">
+        <div class="deck-count due"><span class="dc-val">${due}</span><span class="dc-lbl">Due</span></div>
+        <div class="deck-count new-c"><span class="dc-val">${newC}</span><span class="dc-lbl">New</span></div>
+        <div class="deck-count rev"><span class="dc-val">${rev}</span><span class="dc-lbl">Rev</span></div>
+      </div>
+      <button class="study-btn" ${(due+newC)===0?'disabled':''} onclick="event.stopPropagation();startStudy('${deck.id}')">
+        ${(due+newC)===0 ? '✓ Done' : 'Study →'}
+      </button>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════
+//  STUDY ENGINE
+// ═══════════════════════════════════════════════
+let studyDeckId  = null;   // null = mixed mode
+let studyQueue   = [];
+let studyIndex   = 0;
+let cardFlipped  = false;
+let shownStemIds = new Set();  // track which case stems we've already shown
+
+function buildQueue(deckId) {
+  const allCards = db.cards || [];
+  let pool;
+  if (deckId) {
+    const deck = db.decks.find(d => d.id === deckId);
+    const limit = (deck && deck.newLimit) || 20;
+    const due  = allCards.filter(c => c.deckId===deckId && c.due<=TODAY && c.state!=='new');
+    const newC = allCards.filter(c => c.deckId===deckId && c.state==='new').slice(0, limit);
+    pool = [...due, ...newC];
+  } else {
+    // Mixed: all decks
+    const due  = allCards.filter(c => c.due<=TODAY && c.state!=='new');
+    const newC = allCards.filter(c => c.state==='new').slice(0, 30);
+    pool = shuffle([...due, ...newC]);
+  }
+  return pool;
+}
+
+function shuffle(arr) {
+  for (let i=arr.length-1;i>0;i--) { const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; }
+  return arr;
+}
+
+function startStudy(deckId) {
+  studyDeckId = deckId || null;
+  studyQueue  = buildQueue(deckId);
+  studyIndex  = 0;
+  cardFlipped = false;
+  shownStemIds.clear();
+  showPage('study', document.querySelector('[data-page="study"]'));
+}
+
+function startMixedStudy() { startStudy(null); }
+
+function renderStudyPage() {
+  const inner = document.getElementById('study-inner');
+
+  if (!studyQueue || studyQueue.length === 0) {
+    if (studyDeckId !== undefined && studyDeckId !== null || studyQueue.length === 0 && studyIndex > 0) {
+      inner.innerHTML = `<div class="done-state"><div class="done-icon">🎯</div><h2>Session Complete</h2><p>All cards reviewed. Come back tomorrow.</p><button class="btn btn-primary" style="margin-top:0" onclick="showPage('dashboard',document.querySelector('[data-page=dashboard]'))">← Dashboard</button></div>`;
+    } else {
+      inner.innerHTML = `<div class="done-state"><div class="done-icon">📚</div><h2>Ready to Study</h2><p>Choose a deck from the dashboard, or use Study All.</p><button class="btn btn-primary" style="margin-top:0" onclick="showPage('dashboard',document.querySelector('[data-page=dashboard]'))">Go to Dashboard →</button></div>`;
+    }
+    return;
+  }
+
+  if (studyIndex >= studyQueue.length) {
+    inner.innerHTML = `<div class="done-state"><div class="done-icon">🎯</div><h2>Session Complete</h2><p>Reviewed ${studyQueue.length} cards. Great work.</p><button class="btn btn-primary" onclick="showPage('dashboard',document.querySelector('[data-page=dashboard]'))">← Dashboard</button></div>`;
+    updateStreak();
+    return;
+  }
+
+  const card   = studyQueue[studyIndex];
+  const deck   = db.decks.find(d => d.id === card.deckId);
+  const caseObj= card.caseId ? (db.cases||[]).find(cs => cs.id===card.caseId) : null;
+  const intervals = FSRS.intervals(card);
+  const total  = studyQueue.length;
+  const pct    = (studyIndex / total * 100).toFixed(1);
+
+  const stemMode = deck ? (deck.stemMode || 'once') : 'once';
+  const showStem = caseObj && (stemMode === 'always' || !shownStemIds.has(caseObj.id));
+
+  let stemHtml = '';
+  if (showStem) {
+    shownStemIds.add(caseObj.id);
+    stemHtml = `<div class="stem-panel"><div class="stem-text">${escHtml(caseObj.stem)}</div></div>`;
+  }
+
+  const deckLabel = studyDeckId ? escHtml(deck ? deck.name : '') : '🔀 Mixed';
+  const remaining = total - studyIndex;
+
+  inner.innerHTML = `
+  <div class="study-meta">
+    <div class="study-deck-name">${deckLabel}${caseObj?` — <span style="color:var(--accent2);font-size:11px">${escHtml(caseObj.title)}</span>`:''}</div>
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
+    <div class="card-counter">${studyIndex}/${total} · <span style="color:var(--accent2)">${remaining} left</span></div>
+  </div>
+  ${stemHtml}
+  <div class="card-scene" onclick="flipCard()">
+    <div class="card-3d" id="card-3d">
+      <div class="card-face card-front">
+        <div class="card-side-label">Question</div>
+        <div class="card-content"><div class="card-question">${escHtml(card.q)}</div></div>
+        <div class="card-hint">Click · Space · Enter to reveal</div>
+      </div>
+      <div class="card-face card-back">
+        <div class="card-side-label">Answer</div>
+        <div class="card-content"><div class="card-answer">${escHtml(card.a)}</div></div>
+        <div class="card-hint">Rate your recall</div>
+      </div>
+    </div>
+  </div>
+  <div class="rating-row" id="rating-row">
+    <button class="rating-btn again" onclick="rateCard(1)"><span class="rl">Again</span><span class="ri">${intervals[0]}</span></button>
+    <button class="rating-btn hard"  onclick="rateCard(2)"><span class="rl">Hard</span><span class="ri">${intervals[1]}</span></button>
+    <button class="rating-btn good"  onclick="rateCard(3)"><span class="rl">Good</span><span class="ri">${intervals[2]}</span></button>
+    <button class="rating-btn easy"  onclick="rateCard(4)"><span class="rl">Easy</span><span class="ri">${intervals[3]}</span></button>
+  </div>`;
+
+  cardFlipped = false;
+}
+
+function flipCard() {
+  if (cardFlipped) return;
+  cardFlipped = true;
+  document.getElementById('card-3d').classList.add('flipped');
+  setTimeout(() => document.getElementById('rating-row').classList.add('visible'), 280);
+}
+
+function rateCard(grade) {
+  const card = studyQueue[studyIndex];
+  const result = FSRS.schedule(card, grade);
+  const idx = db.cards.findIndex(c => c.id===card.id);
+  if (idx !== -1) { Object.assign(db.cards[idx], result); }
+  if (!db.reviewLog[TODAY]) db.reviewLog[TODAY] = 0;
+  db.reviewLog[TODAY]++;
+  if (grade === 1) studyQueue.push({...card, ...result});
+  studyIndex++;
+  cardFlipped = false;
+  scheduleSave();
+  renderStudyPage();
+}
+
+function updateStreak() {
+  const s = db.streak || { lastDate: null, count: 0 };
+  if (s.lastDate === TODAY) return;
+  const yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
+  const yStr = yesterday.toISOString().slice(0,10);
+  s.count = s.lastDate === yStr ? s.count + 1 : 1;
+  s.lastDate = TODAY;
+  db.streak = s;
+  scheduleSave();
+}
+
+// Keyboard
+document.addEventListener('keydown', e => {
+  if (!document.getElementById('page-study').classList.contains('active')) return;
+  if (['Space','Enter'].includes(e.code)) { e.preventDefault(); flipCard(); }
+  if (e.key==='1') rateCard(1);
+  if (e.key==='2') rateCard(2);
+  if (e.key==='3') rateCard(3);
+  if (e.key==='4') rateCard(4);
+});
+
+// ═══════════════════════════════════════════════
+//  EDITOR
+// ═══════════════════════════════════════════════
+let editorDeckId    = null;
+let selectedCaseId  = null;
+let selectedCardId  = null;
+let sidebarTabMode  = 'cases';
+
+function renderEditor() {
+  const sel = document.getElementById('editor-deck-select');
+  const prev = sel.value;
+  sel.innerHTML = (db.decks||[]).map(d=>`<option value="${d.id}">${escHtml(d.name)}</option>`).join('');
+  if (prev && db.decks.find(d=>d.id===prev)) sel.value = prev;
+  editorDeckId = sel.value || (db.decks[0] && db.decks[0].id);
+  if (editorDeckId) sel.value = editorDeckId;
+  renderSidebar();
+}
+
+function onEditorDeckChange() {
+  editorDeckId = document.getElementById('editor-deck-select').value;
+  selectedCaseId = null; selectedCardId = null;
+  renderSidebar();
+  showEditorEmpty();
+}
+
+function switchSidebarTab(mode, el) {
+  sidebarTabMode = mode;
+  document.querySelectorAll('.sidebar-tab').forEach(t=>t.classList.remove('active'));
+  if (el) el.classList.add('active');
+  renderSidebar();
+}
+
+function renderSidebar() {
+  const body = document.getElementById('sidebar-body');
+  if (!editorDeckId) { body.innerHTML=''; return; }
+
+  if (sidebarTabMode === 'cases') {
+    const cases = (db.cases||[]).filter(cs=>cs.deckId===editorDeckId);
+    let html = `<div class="sidebar-section-header">Cases <span>${cases.length}</span> <button class="add-btn" onclick="addCase()" title="Add case">+</button></div>`;
+    if (cases.length === 0) html += '<div style="padding:16px 14px;font-size:11px;color:var(--text-muted)">No cases yet.</div>';
+    html += cases.map(cs => {
+      const cCards = (db.cards||[]).filter(c=>c.caseId===cs.id);
+      const isOpen = cs.id === selectedCaseId;
+      const cardItems = cCards.map(c=>`
+        <div class="card-sub-item ${c.id===selectedCardId?'selected':''}" onclick="selectCard('${c.id}','${cs.id}')">
+          <span class="card-sub-q">${escHtml(c.q)}</span>
+          <button class="card-del-btn" onclick="event.stopPropagation();deleteCard('${c.id}')" title="Delete">×</button>
+        </div>`).join('');
+      return `<div class="case-item ${isOpen?'open':''} ${cs.id===selectedCaseId?'selected':''}" id="case-item-${cs.id}">
+        <div class="case-item-header" onclick="toggleCase('${cs.id}')">
+          <span class="case-expander">▶</span>
+          <span class="case-title-text">${escHtml(cs.title)}</span>
+          <span class="case-card-count">${cCards.length}</span>
+        </div>
+        <div class="case-cards">
+          ${cardItems}
+          <div class="card-sub-item" onclick="addCardToCase('${cs.id}')" style="color:var(--accent3);cursor:pointer">+ Add card</div>
+        </div>
+      </div>`;
+    }).join('');
+    body.innerHTML = html;
+  } else {
+    // All cards flat
+    const cards = (db.cards||[]).filter(c=>c.deckId===editorDeckId);
+    let html = `<div class="sidebar-section-header">All Cards <span>${cards.length}</span></div>`;
+    html += cards.map((c,i)=>`
+      <div class="card-sub-item ${c.id===selectedCardId?'selected':''}" onclick="selectCard('${c.id}',null)" style="padding-left:14px">
+        <span class="card-list-num" style="font-size:10px;color:var(--text-muted);flex-shrink:0">${String(i+1).padStart(2,'0')}</span>
+        <span class="card-sub-q">${escHtml(c.q)}</span>
+        <button class="card-del-btn" onclick="event.stopPropagation();deleteCard('${c.id}')" title="Delete">×</button>
+      </div>`).join('');
+    if (cards.length===0) html += '<div style="padding:16px 14px;font-size:11px;color:var(--text-muted)">No cards yet.</div>';
+    body.innerHTML = html;
+  }
+}
+
+function toggleCase(caseId) {
+  selectedCaseId = selectedCaseId === caseId ? null : caseId;
+  selectedCardId = null;
+  renderSidebar();
+  if (selectedCaseId) renderEditorCasePanel(caseId);
+  else showEditorEmpty();
+}
+
+function selectCard(cardId, caseId) {
+  selectedCardId = cardId;
+  if (caseId) selectedCaseId = caseId;
+  renderSidebar();
+  renderEditorCardPanel(cardId);
+}
+
+function showEditorEmpty() {
+  document.getElementById('editor-main').innerHTML = '<div class="empty-panel"><div class="ep-icon">🗂</div><div>Select a case or card to edit</div></div>';
+}
+
+function renderEditorCasePanel(caseId) {
+  const cs = (db.cases||[]).find(c=>c.id===caseId);
+  if (!cs) return;
+  const main = document.getElementById('editor-main');
+  main.innerHTML = `
+    <div class="editor-field">
+      <label class="editor-label">Case Title</label>
+      <input class="editor-input" id="edit-case-title" value="${escAttr(cs.title)}" oninput="saveCaseField('${caseId}','title',this.value)" placeholder="e.g. Acute MI presentation">
+    </div>
+    <div class="editor-field">
+      <label class="editor-label">Clinical Stem / Vignette</label>
+      <textarea class="editor-textarea tall" id="edit-case-stem" oninput="saveCaseField('${caseId}','stem',this.value)" placeholder="A 58-year-old male presents with…">${escHtml(cs.stem)}</textarea>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-sm btn-primary" onclick="addCardToCase('${caseId}')">+ Add Card to Case</button>
+      <button class="btn btn-sm btn-danger" onclick="deleteCase('${caseId}')">Delete Case</button>
+    </div>`;
+}
+
+function renderEditorCardPanel(cardId) {
+  const card = (db.cards||[]).find(c=>c.id===cardId);
+  if (!card) return;
+  const caseObj = card.caseId ? (db.cases||[]).find(cs=>cs.id===card.caseId) : null;
+  const main = document.getElementById('editor-main');
+  main.innerHTML = `
+    ${caseObj ? `<div style="font-size:11px;color:var(--accent2);margin-bottom:-8px">Case: ${escHtml(caseObj.title)}</div>` : ''}
+    <div class="editor-field">
+      <label class="editor-label">Front — Question</label>
+      <textarea class="editor-textarea" oninput="saveCardField('${cardId}','q',this.value)">${escHtml(card.q)}</textarea>
+    </div>
+    <div class="editor-field">
+      <label class="editor-label">Back — Answer</label>
+      <textarea class="editor-textarea tall" oninput="saveCardField('${cardId}','a',this.value)">${escHtml(card.a)}</textarea>
+    </div>
+    <div class="editor-card-meta">
+      <span>State: <span class="tag-${card.state}">${card.state}</span></span>
+      <span>Reps: ${card.reps}</span>
+      <span>Stability: ${card.stability.toFixed(1)}d</span>
+      <span>Due: ${card.due}</span>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-sm" onclick="resetCard('${cardId}')">Reset Progress</button>
+    </div>`;
+}
+
+function addCase() {
+  if (!editorDeckId) return;
+  const cs = { id: uid('cs'), deckId: editorDeckId, title: 'New Case', stem: '' };
+  if (!db.cases) db.cases = [];
+  db.cases.push(cs);
+  selectedCaseId = cs.id;
+  selectedCardId = null;
+  scheduleSave();
+  renderSidebar();
+  renderEditorCasePanel(cs.id);
+  setTimeout(() => { const t = document.getElementById('edit-case-title'); if (t) { t.focus(); t.select(); } }, 50);
+}
+
+function addCardToCase(caseId) {
+  if (!editorDeckId) return;
+  const card = makeCard(uid('c'), editorDeckId, caseId, 'New Question', 'New Answer');
+  if (!db.cards) db.cards = [];
+  db.cards.push(card);
+  selectedCaseId = caseId;
+  selectedCardId = card.id;
+  scheduleSave();
+  renderSidebar();
+  renderEditorCardPanel(card.id);
+}
+
+function deleteCase(caseId) {
+  if (!confirm('Delete this case and all its cards?')) return;
+  db.cases = (db.cases || []).filter(cs => cs.id !== caseId);
+  db.cards = (db.cards || []).filter(c => c.caseId !== caseId);
+  selectedCaseId = null; selectedCardId = null;
+  scheduleSave(); renderSidebar(); showEditorEmpty();
+}
+
+function deleteCard(cardId) {
+  if (!confirm('Delete this card?')) return;
+  db.cards = (db.cards || []).filter(c => c.id !== cardId);
+  if (selectedCardId === cardId) { selectedCardId = null; showEditorEmpty(); }
+  scheduleSave(); renderSidebar();
+}
+
+function saveCaseField(caseId, field, value) {
+  const idx = (db.cases || []).findIndex(cs => cs.id === caseId);
+  if (idx !== -1) { db.cases[idx][field] = value; scheduleSave(); }
+  if (field === 'title') renderSidebar();
+}
+
+function saveCardField(cardId, field, value) {
+  const idx = (db.cards || []).findIndex(c => c.id === cardId);
+  if (idx !== -1) { db.cards[idx][field] = value; scheduleSave(); }
+  if (field === 'q') renderSidebar();
+}
+
+function resetCard(cardId) {
+  const idx = (db.cards || []).findIndex(c => c.id === cardId);
+  if (idx === -1) return;
+  Object.assign(db.cards[idx], { state: 'new', due: TODAY, stability: 1, difficulty: 5, reps: 0, lapses: 0, lastRated: null });
+  scheduleSave(); renderEditorCardPanel(cardId);
+}
+
+// ── PROGRESS ──────────────────────────────────
+function renderProgress() {
+  const days = ['S','M','T','W','T','F','S'];
+  const weekData = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    const ds = d.toISOString().slice(0,10);
+    weekData.push({ day: days[d.getDay()], count: (db.reviewLog || {})[ds] || 0 });
+  }
+  const maxV = Math.max(...weekData.map(w => w.count), 1);
+  document.getElementById('bar-chart').innerHTML = weekData.map((w, i) =>
+    `<div class="bar-col"><div class="bar ${i===6?'yellow':i>=4?'orange':'green'}" style="height:${Math.max(3, w.count/maxV*90)}px" title="${w.count} reviews"></div><div class="bar-day">${w.day}</div></div>`
+  ).join('');
+
+  let hh = '';
+  for (let i = 27; i >= 0; i--) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    const ds = d.toISOString().slice(0,10);
+    const c = (db.reviewLog || {})[ds] || 0;
+    const l = c === 0 ? '' : c < 5 ? 'l1' : c < 15 ? 'l2' : c < 30 ? 'l3' : 'l4';
+    hh += `<div class="heat-cell ${l}" title="${ds}: ${c} reviews"></div>`;
+  }
+  document.getElementById('heatmap').innerHTML = hh;
+
+  const states = { new: 0, learning: 0, review: 0, relearn: 0 };
+  (db.cards || []).forEach(c => { if (states[c.state] !== undefined) states[c.state]++; });
+  const tot = (db.cards || []).length || 1;
+  const colors = { new: 'var(--accent3)', learning: 'var(--accent2)', review: 'var(--green)', relearn: 'var(--red)' };
+  document.getElementById('state-dist').innerHTML = Object.entries(states).map(([s, n]) =>
+    `<div class="state-row"><span class="state-name tag-${s}">${s}</span><div class="state-bar-track"><div class="state-bar-fill" style="width:${Math.round(n/tot*100)}%;background:${colors[s]}"></div></div><span class="state-pct">${n}</span></div>`
+  ).join('');
+
+  document.getElementById('deck-progress-list').innerHTML = (db.decks || []).map(deck => {
+    const cards = (db.cards || []).filter(c => c.deckId === deck.id);
+    const due   = cards.filter(c => c.due <= TODAY && c.state !== 'new').length;
+    const newC  = cards.filter(c => c.state === 'new').length;
+    return `<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);font-size:12px">
+      <span>${escHtml(deck.name)}</span>
+      <span style="color:var(--text-muted)">${cards.length} cards · <span style="color:var(--accent2)">${due} due</span> · <span style="color:var(--accent3)">${newC} new</span></span>
+    </div>`;
+  }).join('') || '<div style="color:var(--text-muted);font-size:12px;padding-top:12px">No decks yet.</div>';
+}
+
+// ── DECK MANAGEMENT ───────────────────────────
+function openNewDeckModal() {
+  document.getElementById('new-deck-name').value = '';
+  document.getElementById('modal-new-deck').classList.add('open');
+  setTimeout(() => document.getElementById('new-deck-name').focus(), 50);
+}
+
+function createDeck() {
+  const name = document.getElementById('new-deck-name').value.trim();
+  if (!name) return;
+  if (!db.decks) db.decks = [];
+  db.decks.push({ id: uid('d'), name, stemMode: 'once', newLimit: 20 });
+  scheduleSave();
+  closeModal('modal-new-deck');
+  renderDashboard();
+  renderEditor();
+}
+
+function deleteDeck() {
+  if (!editorDeckId) return;
+  const deck = db.decks.find(d => d.id === editorDeckId);
+  if (!deck || !confirm(`Delete "${deck.name}" and all its content?`)) return;
+  db.decks  = (db.decks  || []).filter(d  => d.id  !== editorDeckId);
+  db.cases  = (db.cases  || []).filter(cs => cs.deckId !== editorDeckId);
+  db.cards  = (db.cards  || []).filter(c  => c.deckId  !== editorDeckId);
+  editorDeckId = null; selectedCaseId = null; selectedCardId = null;
+  scheduleSave(); renderEditor(); renderDashboard();
+}
+
+let editingDeckId = null;
+
+function openDeckSettings() {
+  if (!editorDeckId) return;
+  editingDeckId = editorDeckId;
+  const deck = db.decks.find(d => d.id === editorDeckId);
+  if (!deck) return;
+  document.getElementById('ds-title').textContent = deck.name + ' — Settings';
+  document.getElementById('new-card-limit').value = deck.newLimit || 20;
+  const mode = deck.stemMode || 'once';
+  document.getElementById('stem-once-btn').classList.toggle('active', mode === 'once');
+  document.getElementById('stem-always-btn').classList.toggle('active', mode === 'always');
+  document.getElementById('modal-deck-settings').classList.add('open');
+}
+
+function setDeckStemMode(mode) {
+  document.getElementById('stem-once-btn').classList.toggle('active', mode === 'once');
+  document.getElementById('stem-always-btn').classList.toggle('active', mode === 'always');
+}
+
+function saveDeckSettings() {
+  const deck = db.decks.find(d => d.id === editingDeckId);
+  if (!deck) return;
+  deck.stemMode = document.getElementById('stem-once-btn').classList.contains('active') ? 'once' : 'always';
+  deck.newLimit  = parseInt(document.getElementById('new-card-limit').value) || 20;
+  scheduleSave();
+  closeModal('modal-deck-settings');
+}
+
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+document.querySelectorAll('.modal-overlay').forEach(m =>
+  m.addEventListener('click', function(e) { if (e.target === this) closeModal(this.id); })
+);
+
+// ── UTILS ─────────────────────────────────────
+function escHtml(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── THEME ─────────────────────────────────────
+function applyTheme(t) {
+  document.body.classList.toggle('theme-dark',  t === 'dark');
+  document.body.classList.toggle('theme-light', t === 'light');
+  document.getElementById('theme-btn').textContent = t === 'dark' ? '☀️' : '🌙';
+  db.theme = t;
+}
+
+function toggleTheme() {
+  applyTheme(db.theme === 'dark' ? 'light' : 'dark');
+  scheduleSave();
+}
+
+// ── SYNC STUBS (local-only for now) ───────────
+function setSyncStatus() {}
+function syncUp() {}
+function scheduleSave() { saveLocal(db); }
+
+// ── INIT ──────────────────────────────────────
+(function init() {
+  db = loadLocal();
+  // Skip auth screen entirely for now — go straight to app
+  document.getElementById('auth-screen').style.display = 'none';
+  document.getElementById('main-app').style.display = 'flex';
+  applyTheme(db.theme || 'dark');
+  renderDashboard();
+})();
+</script>
+</body>
+</html>
