@@ -773,14 +773,7 @@ function renderCaseCol() {
         <span class="case-title-t${caseSel?' sel':''}">${esc(cs.title)}</span>
         <span class="case-counts">${stems.length}S · ${cCards.length}Q</span>
         <button class="sub-del" data-action="delCase" data-case="${cs.id}" title="Delete case">×</button>
-      </div>
-      <div class="case-sub">
-        ${stemRows}
-        <div class="sub-add stem" data-action="addStem" data-case="${cs.id}">+ Add Stem</div>
-        ${cardRows}
-        <div class="sub-add" data-action="addCard" data-case="${cs.id}">+ Add Card</div>
-      </div>
-    </div>`;
+      </div>`;
   }).join('');
 }
 
