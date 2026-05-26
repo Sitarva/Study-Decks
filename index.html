@@ -1,3 +1,4 @@
+cat > /mnt/user-data/outputs/index.html << 'HTMLEOF'
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -773,7 +774,14 @@ function renderCaseCol() {
         <span class="case-title-t${caseSel?' sel':''}">${esc(cs.title)}</span>
         <span class="case-counts">${stems.length}S · ${cCards.length}Q</span>
         <button class="sub-del" data-action="delCase" data-case="${cs.id}" title="Delete case">×</button>
-      </div>`;
+      </div>
+      <div class="case-sub">
+        ${stemRows}
+        <div class="sub-add stem" data-action="addStem" data-case="${cs.id}">+ Add Stem</div>
+        ${cardRows}
+        <div class="sub-add" data-action="addCard" data-case="${cs.id}">+ Add Card</div>
+      </div>
+    </div>`;
   }).join('');
 }
 
@@ -1135,17 +1143,6 @@ function escPlain(s) { return esc(String(s||'').replace(/<[^>]*>/g,'')); }
 
 // ── BOOT ─────────────────────────────────────────────────────
 applyTheme();
-renderDash();
-</script>
-</body>
-</html>
-HTMLEOF
-echo "Lines: $(wc -l < /mnt/user-data/outputs/index.html)"
-tail -4 /mnt/user-data/outputs/index.html
-grep -o "^function [a-zA-Z]*" /mnt/user-data/outputs/index.html | sort | uniq -d | wc -l
-Output
-
-Lines: 1148
 renderDash();
 </script>
 </body>
