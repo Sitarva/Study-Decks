@@ -467,8 +467,8 @@ main{flex:1;padding:32px 28px;max-width:1080px;margin:0 auto;width:100%;}
 //  SUPABASE CONFIG — replace these two values
 //  after completing Step 4 of SETUP.md
 // ════════════════════════════════════════════════
-const SB_URL = 'YOUR_SUPABASE_URL';
-const SB_KEY = 'YOUR_SUPABASE_ANON_KEY';
+const SB_URL = 'https://zhctcpxhgtrjrpawhthl.supabase.co/rest/v1/';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpoY3RjcHhoZ3RyanJwYXdodGhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2ODc3OTUsImV4cCI6MjA5NTI2Mzc5NX0.yriJ5BWWLZi2hTCt5DvyjrePBrsLcW-jJVWscqr9V4M';
 
 let sb = null, currentUser = null, isOffline = false, syncTimer = null;
 
@@ -1308,96 +1308,6 @@ function escPlain(s){return esc(String(s||'').replace(/<[^>]*>/g,''));}
     });
   } else {
     // No Supabase configured — go straight to app
-    enterOffline();
-  }
-})();
-</script>
-</body>
-</html>
-HTMLEOF
-echo "Lines: $(wc -l < /mnt/user-data/outputs/index.html)"
-tail -4 /mnt/user-data/outputs/index.html
-grep -o "^function [a-zA-Z]*" /mnt/user-data/outputs/index.html | sort | uniq -d | wc -l
-Output
-
-Lines: 1199
-function openSettingsModal(){
-  const cfg=db.settings||{};
-  document.getElementById('tog-once').classList.toggle('active',(cfg.stemMode||'once')==='once');
- 0document.getElementById('tog-always').classList.toggle('active',cfg.stemMode==='always');
-  document.getElementById('setting-limit').value=cfg.newLimit||20;
-}
-function setTog(val){
-  document.getElementById('tog-once').classList.toggle('active',val==='once');
-  document.getElementById('tog-always').classList.toggle('active',val==='always');
-}
-function saveSettings(){
-  if(!db.settings)db.settings={};
-  db.settings.stemMode=document.getElementById('tog-once').classList.contains('active')?'once':'always';
-  db.settings.newLimit=parseInt(document.getElementById('setting-limit').value)||20;
-  scheduleSave();closeModal('modal-settings');
-}
-
-// ── PROGRESS ────────────────────────────────────
-function renderProgress(){
-  const cards=db.cards||[];
-  const tLog=(db.ratingLog||{})[TODAY]||{total:0,good:0};
-  document.getElementById('pg-summary').innerHTML=`
-    <div class="pg-si"><div class="pg-sv c-a2">${tLog.total}</div><div class="pg-sl">Reviewed Today</div></div>
-    <div class="pg-si"><div class="pg-sv c-acc">${(db.streak||{}).count||0}</div><div class="pg-sl">Day Streak</div></div>
-    <div class="pg-si"><div class="pg-sv c-g">${cards.filter(c=>c.state==='review'||c.state==='relearn').length}</div><div class="pg-sl">In Review</div></div>
-    <div class="pg-si"><div class="pg-sv c-a3">${cards.filter(c=>c.state==='new').length}</div><div class="pg-sl">Unseen</div></div>`;
-  const dayNames=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  const fcData=Array.from({length:7},(_,i)=>{const d=new Date();d.setDate(d.getDate()+i);return{n:cards.filter(c=>c.due===d.toISOString().slice(0,10)&&c.state!=='new').length,lbl:dayNames[d.getDay()],today:i===0};});
-  const mx=Math.max(...fcData.map(x=>x.n),1);
-  document.getElementById('forecast').innerHTML=fcData.map(x=>`<div class="fc-col"><div class="fc-bar-area"><div class="fc-bar${x.today?' today':''}" style="height:${Math.max(3,x.n/mx*76)}px"></div></div><div class="fc-n">${x.n}</div><div class="fc-lbl${x.today?' today':''}">${x.today?'TODAY':x.lbl}</div></div>`).join('');
-  document.getElementById('ret-list').innerHTML=(db.decks||[]).map(deck=>{
-    const dc=cards.filter(c=>c.deckId===deck.id&&c.reps>0);
-    if(!dc.length)return`<div class="ret-row"><span class="ret-name">${esc(deck.name)}</span><span style="font-size:12px;color:var(--muted)">No reviews yet</span></div>`;
-    const pct=Math.round(dc.filter(c=>c.stab>=7).length/dc.length*100);
-    const col=pct>=80?'var(--green)':pct>=50?'var(--acc)':'var(--red)';
-    return`<div class="ret-row"><span class="ret-name">${esc(deck.name)}</span><div class="ret-track"><div class="ret-fill" style="width:${pct}%;background:${col}"></div></div><span class="ret-pct" style="color:${col}">${pct}%</span></div>`;
-  }).join('')||'<div style="font-size:12px;color:var(--muted)">No decks.</div>';
-  const scoredCases=(db.cases||[]).map(cs=>({cs,score:caseDifficulty(cs)})).filter(x=>(db.cards||[]).some(c=>c.caseId===x.cs.id&&c.reps>0)).sort((a,b)=>b.score-a.score).slice(0,5);
-  const wcEl=document.getElementById('weak-cases');
-  if(!scoredCases.length){wcEl.innerHTML='<div style="font-size:13px;color:var(--muted);padding:6px 0">No data yet — keep studying! 🎉</div>';}
-  else wcEl.innerHTML=scoredCases.map(({cs,score})=>{
-    const cCards=(db.cards||[]).filter(c=>c.caseId===cs.id&&c.reps>0);
-    const totalLapses=cCards.reduce((a,c)=>a+c.lapses,0);
-    const deck=(db.decks||[]).find(d=>d.id===cs.deckId);
-    const pct=Math.round(score*100);
-    return`<div class="wc-row"><div class="wc-info"><div class="wc-title">${esc(cs.title)}</div><div class="wc-meta">${deck?esc(deck.name):''}  ·  ${cCards.length} cards  ·  ${totalLapses} lapse${totalLapses!==1?'s':''}</div></div><div class="wc-bar-wrap"><div class="wc-bar" style="width:${pct}%"></div></div><div class="wc-score">${pct}%</div></div>`;
-  }).join('');
-  const st={new:0,learning:0,review:0,relearn:0};
-  cards.forEach(c=>{if(st[c.state]!==undefined)st[c.state]++;});
-  const tot=cards.length||1;
-  const cols={new:'var(--acc)',learning:'var(--a2)',review:'var(--green)',relearn:'var(--red)'};
-  document.getElementById('state-dist').innerHTML=Object.entries(st).map(([s,n])=>`<div class="state-row"><span class="state-nm">${s}</span><div class="state-trk"><div class="state-fill" style="width:${Math.round(n/tot*100)}%;background:${cols[s]}"></div></div><span class="state-n">${n}</span></div>`).join('');
-}
-
-// ── MODALS ──────────────────────────────────────
-function openModal(id){
-  document.getElementById(id).classList.add('open');
-  if(id==='modal-new-deck')setTimeout(()=>{const i=document.getElementById('new-deck-name');if(i){i.value='';i.focus();}},50);
-  if(id==='modal-settings')openSettingsModal();
-}
-function closeModal(id){document.getElementById(id).classList.remove('open');}
-document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',function(e){if(e.target===this)closeModal(this.id);}));
-
-// ── UTILS ───────────────────────────────────────
-function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function escPlain(s){return esc(String(s||'').replace(/<[^>]*>/g,''));}
-
-// ── BOOT ────────────────────────────────────────
-(function init(){
-  const hasSB=initSB();
-  applyTheme();
-  if(hasSB){
-    sb.auth.getSession().then(({data:{session}})=>{
-      if(session){currentUser=session.user;syncDown().then(()=>{db=loadLocal();enterApp();});}
-      else{document.getElementById('auth-screen').style.display='flex';}
-    });
-  } else {
     enterOffline();
   }
 })();
