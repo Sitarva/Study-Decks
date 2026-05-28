@@ -29,38 +29,38 @@ body.dark::after{content:'';position:fixed;inset:0;background-image:linear-gradi
 body.dark::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.05) 2px,rgba(0,0,0,.05) 4px);pointer-events:none;z-index:1000;}
 .wrap{position:relative;z-index:1;display:flex;flex-direction:column;min-height:100vh;}
 
-/* AUTH */
+/* ── AUTH ── */
 #auth-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
-.auth-box{width:100%;max-width:380px;border:1px solid var(--border);background:var(--surf);padding:36px;}
+.auth-box{width:100%;max-width:380px;border:1px solid var(--border);background:var(--surf);padding:36px;border-radius:calc(var(--r)*2);}
 .auth-logo{font-size:20px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:8px;}
-.auth-sub{font-size:12px;color:var(--muted);margin-bottom:28px;letter-spacing:.5px;}
+.badge{background:var(--acc);color:#fff;font-size:10px;font-family:var(--mono);font-weight:500;padding:2px 7px;letter-spacing:1px;border-radius:var(--r);}
+.auth-sub{font-size:12px;color:var(--muted);margin-bottom:28px;}
 .auth-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:22px;}
 .auth-tab{font-size:13px;font-weight:500;padding:8px 14px;background:none;border:none;border-bottom:2px solid transparent;color:var(--muted);cursor:pointer;transition:all .15s;margin-bottom:-1px;}
 .auth-tab.active{color:var(--acc);border-bottom-color:var(--acc);font-weight:600;}
-.auth-form{display:flex;flex-direction:column;gap:14px;}
+.auth-form{display:flex;flex-direction:column;gap:13px;}
 .auth-field{display:flex;flex-direction:column;gap:5px;}
-.auth-label{font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted);}
-.auth-input{background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:var(--ui);font-size:14px;padding:9px 12px;outline:none;transition:border-color .15s;border-radius:var(--r);}
+.auth-lbl{font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted);}
+.auth-input{background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:var(--ui);font-size:14px;padding:9px 12px;outline:none;transition:border-color .15s;border-radius:var(--r);width:100%;}
 .auth-input:focus{border-color:var(--acc);}
 .auth-err{font-size:12px;color:var(--red);padding:8px 12px;background:rgba(241,53,53,.08);border:1px solid rgba(241,53,53,.2);border-radius:var(--r);display:none;}
 .auth-err.show{display:block;}
 .auth-ok{font-size:12px;color:var(--green);padding:8px 12px;background:rgba(53,241,121,.08);border:1px solid rgba(53,241,121,.2);border-radius:var(--r);display:none;}
 .auth-ok.show{display:block;}
-.auth-offline{font-size:11px;color:var(--muted);text-align:center;}
-.auth-offline a{color:var(--acc);cursor:pointer;text-decoration:underline;}
+.auth-links{display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px;}
+.auth-link{font-size:12px;color:var(--acc);cursor:pointer;background:none;border:none;text-decoration:underline;font-family:var(--ui);}
 
-/* HEADER */
+/* ── HEADER ── */
 header{display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:52px;border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:0;z-index:200;gap:12px;}
 .logo{font-size:17px;font-weight:700;letter-spacing:-.3px;display:flex;align-items:center;gap:8px;flex-shrink:0;}
-.badge{background:var(--acc);color:#fff;font-size:10px;font-family:var(--mono);font-weight:500;padding:2px 7px;letter-spacing:1px;border-radius:var(--r);}
 .hright{display:flex;align-items:center;gap:6px;}
 .sync-pill{font-size:10px;font-family:var(--mono);padding:3px 8px;border:1px solid var(--border);border-radius:var(--r);color:var(--muted);display:none;}
 .sync-pill.show{display:inline-block;}
 .sync-pill.ok{color:var(--green);border-color:var(--green);}
 .sync-pill.err{color:var(--red);border-color:var(--red);}
-.sync-pill.syncing{color:var(--a3);border-color:var(--a3);}
+.sync-pill.busy{color:var(--a3);border-color:var(--a3);}
 
-/* BUTTONS */
+/* ── BUTTONS ── */
 .btn{font-family:var(--ui);font-size:13px;font-weight:500;padding:7px 14px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;transition:all .15s;border-radius:var(--r);white-space:nowrap;line-height:1.4;}
 .btn:hover{border-color:var(--acc);color:var(--acc);}
 .btn-p{background:var(--acc);color:#fff;border-color:var(--acc);font-weight:600;}
@@ -72,27 +72,27 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 2
 .btn-icon:hover{border-color:var(--acc);color:var(--acc);}
 button:disabled{opacity:.38;cursor:default;pointer-events:none;}
 
-/* TABS */
+/* ── TABS ── */
 .tabs{display:flex;border-bottom:1px solid var(--border);padding:0 24px;background:var(--bg);overflow-x:auto;scrollbar-width:none;}
 .tabs::-webkit-scrollbar{display:none;}
 .tab{font-size:13px;font-weight:500;padding:12px 16px;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;background:none;border-top:none;border-left:none;border-right:none;transition:all .15s;white-space:nowrap;}
 .tab:hover{color:var(--dim);}
 .tab.active{color:var(--acc);border-bottom-color:var(--acc);font-weight:600;}
 
-/* MOBILE NAV */
+/* ── MOBILE NAV ── */
 .mob-nav{display:none;position:fixed;bottom:0;left:0;right:0;height:58px;background:var(--surf);border-top:1px solid var(--border);z-index:200;align-items:stretch;}
 .mob-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:10px;font-weight:500;-webkit-tap-highlight-color:transparent;}
 .mob-btn .ic{font-size:20px;line-height:1;}
 .mob-btn.active{color:var(--acc);}
 
-/* LAYOUT */
+/* ── LAYOUT ── */
 main{flex:1;padding:32px 28px;max-width:1080px;margin:0 auto;width:100%;}
 .page{display:none;}
 .page.active{display:block;}
 .sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:10px;flex-wrap:wrap;}
 .section-label{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
 
-/* STATS */
+/* ── STATS ── */
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:28px;border-radius:var(--r);overflow:hidden;}
 .stat{background:var(--surf);padding:20px 18px;display:flex;flex-direction:column;gap:6px;}
 .stat-l{font-size:11px;font-weight:500;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);}
@@ -100,7 +100,7 @@ main{flex:1;padding:32px 28px;max-width:1080px;margin:0 auto;width:100%;}
 .c-a2{color:var(--a2);}.c-acc{color:var(--acc);}.c-g{color:var(--green);}.c-a3{color:var(--a3);}
 .stat-s{font-size:12px;color:var(--muted);}
 
-/* DASH ACTIONS */
+/* ── DASH ACTIONS ── */
 .dash-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:28px;}
 .big-btn{font-family:var(--ui);font-size:13px;font-weight:600;padding:18px 20px;border:none;background:var(--acc);color:#fff;cursor:pointer;transition:all .15s;border-radius:var(--r);display:flex;flex-direction:column;gap:4px;text-align:left;width:100%;}
 .big-btn:hover{background:var(--acc-h);}
@@ -108,10 +108,16 @@ main{flex:1;padding:32px 28px;max-width:1080px;margin:0 auto;width:100%;}
 .big-btn .bb-t{font-size:15px;font-weight:700;}
 .big-btn .bb-s{font-size:12px;font-weight:400;opacity:.8;}
 
-/* DECK LIST */
+/* ── INVITES BANNER ── */
+.invites-banner{background:rgba(41,121,255,.08);border:1px solid rgba(41,121,255,.3);border-radius:var(--r);padding:12px 16px;margin-bottom:20px;display:none;align-items:center;gap:12px;}
+.invites-banner.show{display:flex;}
+.invites-banner-text{flex:1;font-size:13px;}
+
+/* ── DECK LIST ── */
 .deck-list{display:flex;flex-direction:column;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
 .deck-row{background:var(--surf);padding:16px 18px;display:flex;align-items:center;gap:14px;transition:background .1s;flex-wrap:wrap;}
 .deck-row:hover{background:var(--card);}
+.deck-row.disabled{opacity:.45;}
 .dk-info{flex:1;min-width:0;}
 .dk-name{font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .dk-meta{font-size:12px;color:var(--muted);margin-top:2px;}
@@ -124,7 +130,7 @@ main{flex:1;padding:32px 28px;max-width:1080px;margin:0 auto;width:100%;}
 .study-btn{font-family:var(--ui);font-size:12px;font-weight:600;padding:8px 16px;background:var(--acc);color:#fff;border:none;cursor:pointer;transition:all .15s;border-radius:var(--r);}
 .study-btn:hover{background:var(--acc-h);}
 
-/* STUDY */
+/* ── STUDY ── */
 .study-wrap{max-width:700px;margin:0 auto;}
 .study-top{display:flex;align-items:center;gap:14px;margin-bottom:22px;flex-wrap:wrap;}
 .study-dn{font-size:13px;font-weight:600;color:var(--dim);flex-shrink:0;}
@@ -134,7 +140,7 @@ main{flex:1;padding:32px 28px;max-width:1080px;margin:0 auto;width:100%;}
 .stem{border:1px solid var(--a2);background:var(--surf);padding:20px 22px;margin-bottom:20px;position:relative;border-radius:var(--r);}
 .stem::before{content:'CASE STEM';position:absolute;top:-1px;left:14px;background:var(--a2);color:#000;font-size:9px;font-family:var(--mono);font-weight:500;letter-spacing:1.5px;padding:2px 8px;border-radius:0 0 3px 3px;}
 .stem-body{font-family:var(--serif);font-size:15px;line-height:1.8;margin-top:10px;font-style:italic;}
-.stem-body h1,.stem-body h2,.stem-body h3{font-style:normal;font-family:var(--ui);}
+.stem-body h1,.stem-body h2,.stem-body h3{font-style:normal;font-family:var(--ui);font-weight:600;}
 .stem-body ul,.stem-body ol{padding-left:20px;margin:4px 0;}
 .scene{perspective:1200px;display:flex;align-items:center;justify-content:center;cursor:pointer;min-height:280px;margin-bottom:20px;-webkit-tap-highlight-color:transparent;}
 .card3d{width:100%;height:280px;position:relative;transform-style:preserve-3d;transition:transform .48s cubic-bezier(.4,0,.2,1);}
@@ -164,8 +170,7 @@ main{flex:1;padding:32px 28px;max-width:1080px;margin:0 auto;width:100%;}
 .ratings{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;opacity:0;transform:translateY(8px);transition:opacity .25s,transform .25s;pointer-events:none;}
 .ratings.show{opacity:1;transform:none;pointer-events:all;}
 .rb{font-family:var(--ui);font-size:12px;font-weight:600;padding:12px 6px;border:1px solid var(--border);background:var(--surf);color:var(--dim);cursor:pointer;transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:3px;border-radius:var(--r);}
-.rb .rl{font-size:13px;font-weight:700;}
-.rb .ri{font-size:10px;color:var(--muted);font-family:var(--mono);}
+.rb .rl{font-size:13px;font-weight:700;}.rb .ri{font-size:10px;color:var(--muted);font-family:var(--mono);}
 .rb.again:hover{border-color:var(--red);color:var(--red);background:rgba(241,53,53,.06);}
 .rb.hard:hover{border-color:var(--a2);color:var(--a2);background:rgba(241,164,53,.06);}
 .rb.good:hover{border-color:var(--acc);color:var(--acc);background:rgba(41,121,255,.06);}
@@ -175,7 +180,7 @@ main{flex:1;padding:32px 28px;max-width:1080px;margin:0 auto;width:100%;}
 .done h2{font-weight:700;font-size:28px;color:var(--acc);margin-bottom:8px;}
 .done p{font-size:13px;color:var(--muted);margin-bottom:24px;}
 
-/* EDITOR */
+/* ── EDITOR ── */
 .ed-layout{display:grid;grid-template-columns:160px 220px 1fr;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;min-height:540px;}
 .ed-col{display:flex;flex-direction:column;overflow:hidden;}
 .col-hdr{padding:10px 14px;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--surf);flex-shrink:0;gap:8px;}
@@ -183,6 +188,7 @@ main{flex:1;padding:32px 28px;max-width:1080px;margin:0 auto;width:100%;}
 .rail-item{padding:11px 14px;border-bottom:1px solid var(--border);cursor:pointer;display:flex;align-items:center;gap:8px;transition:background .1s;}
 .rail-item:hover{background:var(--card);}
 .rail-item.active{background:rgba(41,121,255,.1);border-left:3px solid var(--acc);}
+.rail-item.deck-disabled{opacity:.45;}
 .rail-name{font-size:13px;font-weight:600;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .rail-n{font-size:11px;color:var(--muted);}
 .icon-btn{background:none;border:none;cursor:pointer;color:var(--muted);font-size:14px;padding:2px 5px;border-radius:2px;transition:all .15s;line-height:1;flex-shrink:0;}
@@ -203,8 +209,7 @@ main{flex:1;padding:32px 28px;max-width:1080px;margin:0 auto;width:100%;}
 .sub-row.sel{border-left:3px solid var(--acc);padding-left:21px;}
 .sub-row.sel.stem-sel{border-left-color:var(--a2);}
 .sub-pill{font-size:9px;font-weight:700;padding:1px 5px;border-radius:2px;flex-shrink:0;letter-spacing:.5px;font-family:var(--mono);}
-.pill-s{background:var(--a2);color:#000;}
-.pill-q{background:var(--border);color:var(--dim);}
+.pill-s{background:var(--a2);color:#000;}.pill-q{background:var(--border);color:var(--dim);}
 .sub-text{font-size:11px;color:var(--muted);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .sub-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:15px;padding:2px 6px;line-height:1;border-radius:2px;transition:all .15s;flex-shrink:0;}
 .sub-del:hover{color:var(--red);background:rgba(241,53,53,.08);}
@@ -222,8 +227,11 @@ main{flex:1;padding:32px 28px;max-width:1080px;margin:0 auto;width:100%;}
 .card-meta{display:flex;gap:14px;font-size:12px;color:var(--muted);flex-wrap:wrap;}
 .tag-new{color:var(--acc);}.tag-learning{color:var(--a2);}.tag-review{color:var(--green);}.tag-relearn{color:var(--red);}
 .ed-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.tog-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);gap:12px;}
+.tog-row-l{font-size:13px;font-weight:500;}
+.tog-row-s{font-size:11px;color:var(--muted);margin-top:2px;}
 
-/* RICH TEXT */
+/* ── RICH TEXT ── */
 .rte-wrap{border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
 .rte-wrap:focus-within{border-color:var(--acc);}
 .rte-bar{display:flex;align-items:center;flex-wrap:wrap;padding:4px 8px;gap:2px;background:var(--surf);border-bottom:1px solid var(--border);}
@@ -234,11 +242,10 @@ main{flex:1;padding:32px 28px;max-width:1080px;margin:0 auto;width:100%;}
 .rte-area.tall{min-height:150px;}
 .rte-area.stem-rte{font-family:var(--serif);font-style:italic;font-size:15px;line-height:1.8;}
 
-/* PROGRESS */
+/* ── PROGRESS ── */
 .pg-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:1px;}
 .pg-panel{background:var(--surf);padding:22px 20px;}
 .pg-title{font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
-/* forecast — fixed height bar area, labels below */
 .forecast{display:flex;align-items:flex-end;gap:6px;}
 .fc-col{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;}
 .fc-bar-area{height:80px;display:flex;align-items:flex-end;width:100%;}
@@ -253,7 +260,6 @@ main{flex:1;padding:32px 28px;max-width:1080px;margin:0 auto;width:100%;}
 .ret-track{flex:2;height:5px;background:var(--border);border-radius:3px;}
 .ret-fill{height:100%;border-radius:3px;transition:width .6s;}
 .ret-pct{font-size:14px;font-weight:700;min-width:38px;text-align:right;}
-/* weak cases */
 .wc-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);}
 .wc-row:last-child{border-bottom:none;}
 .wc-info{flex:1;min-width:0;}
@@ -273,11 +279,16 @@ main{flex:1;padding:32px 28px;max-width:1080px;margin:0 auto;width:100%;}
 .pg-sv{font-size:26px;font-weight:700;line-height:1;}
 .pg-sl{font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted);}
 
-/* MODAL */
+/* ── MODAL ── */
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.76);z-index:500;align-items:center;justify-content:center;padding:20px;}
 .overlay.open{display:flex;}
-.modal{background:var(--surf);border:1px solid var(--border);padding:26px;width:100%;max-width:400px;border-radius:calc(var(--r)*2);box-shadow:0 24px 64px rgba(0,0,0,.4);}
+.modal{background:var(--surf);border:1px solid var(--border);padding:26px;width:100%;max-width:440px;border-radius:calc(var(--r)*2);box-shadow:0 24px 64px rgba(0,0,0,.4);}
 .modal-title{font-size:17px;font-weight:700;margin-bottom:20px;}
+.modal-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:18px;}
+.modal-tab{font-size:12px;font-weight:500;padding:7px 13px;background:none;border:none;border-bottom:2px solid transparent;color:var(--muted);cursor:pointer;transition:all .15s;margin-bottom:-1px;}
+.modal-tab.active{color:var(--acc);border-bottom-color:var(--acc);font-weight:600;}
+.modal-tab-panel{display:none;}
+.modal-tab-panel.active{display:block;}
 .modal-row{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--border);gap:16px;}
 .modal-row:last-of-type{border-bottom:none;}
 .mrl{flex:1;}
@@ -287,8 +298,15 @@ main{flex:1;padding:32px 28px;max-width:1080px;margin:0 auto;width:100%;}
 .tog{display:flex;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
 .tog-opt{font-size:12px;font-weight:500;padding:6px 13px;background:none;border:none;color:var(--muted);cursor:pointer;transition:all .15s;}
 .tog-opt.active{background:var(--acc);color:#fff;font-weight:600;}
+.link-box{display:flex;gap:8px;align-items:center;margin-top:10px;}
+.link-input{flex:1;font-family:var(--mono);font-size:11px;padding:8px 10px;background:var(--bg);border:1px solid var(--border);color:var(--dim);border-radius:var(--r);outline:none;}
+.invite-list{margin-top:12px;display:flex;flex-direction:column;gap:8px;max-height:180px;overflow-y:auto;}
+.invite-item{padding:10px 12px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.invite-item-info{font-size:12px;}
+.invite-item-to{font-weight:600;}
+.invite-item-status{font-size:11px;color:var(--muted);margin-top:2px;}
 
-/* RESPONSIVE */
+/* ── RESPONSIVE ── */
 @media(max-width:820px){.ed-layout{grid-template-columns:1fr;}.ed-col:nth-child(1),.ed-col:nth-child(2){max-height:200px;}}
 @media(max-width:660px){
   .stats{grid-template-columns:repeat(2,1fr);}
@@ -300,7 +318,7 @@ main{flex:1;padding:32px 28px;max-width:1080px;margin:0 auto;width:100%;}
   .dk-counts{display:none;}
   .dash-actions{grid-template-columns:1fr;}
   header{padding:0 14px;}
-  #auth-screen{padding:16px;}
+  .ed-layout{grid-template-columns:1fr;}
 }
 ::-webkit-scrollbar{width:4px;height:4px;}
 ::-webkit-scrollbar-track{background:transparent;}
@@ -310,27 +328,45 @@ main{flex:1;padding:32px 28px;max-width:1080px;margin:0 auto;width:100%;}
 <body class="dark">
 <div class="wrap">
 
-<!-- AUTH -->
+<!-- ══ AUTH ══ -->
 <div id="auth-screen" style="display:none">
   <div class="auth-box">
     <div class="auth-logo">Study Deck <span class="badge">FSRS</span></div>
     <div class="auth-sub">Spaced repetition for medicine</div>
-    <div class="auth-tabs">
-      <button class="auth-tab active" onclick="switchAuthTab('login')">Log In</button>
-      <button class="auth-tab" onclick="switchAuthTab('signup')">Sign Up</button>
+    <div class="auth-tabs" id="auth-tab-bar">
+      <button class="auth-tab active" onclick="setAuthMode('login')">Log In</button>
+      <button class="auth-tab" onclick="setAuthMode('signup')">Sign Up</button>
+      <button class="auth-tab" onclick="setAuthMode('reset')">Reset Password</button>
     </div>
     <div class="auth-form">
-      <div class="auth-field"><label class="auth-label">Email</label><input class="auth-input" id="auth-email" type="email" placeholder="you@example.com"></div>
-      <div class="auth-field"><label class="auth-label">Password</label><input class="auth-input" id="auth-password" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')handleAuth()"></div>
+      <div class="auth-field"><label class="auth-lbl">Email</label><input class="auth-input" id="auth-email" type="email" placeholder="you@example.com"></div>
+      <div class="auth-field" id="pw-field"><label class="auth-lbl">Password</label><input class="auth-input" id="auth-password" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')handleAuth()"></div>
       <div class="auth-err" id="auth-err"></div>
       <div class="auth-ok"  id="auth-ok"></div>
       <button class="btn btn-p" id="auth-btn" onclick="handleAuth()">Log In</button>
-      <div class="auth-offline">No account? <a onclick="enterOffline()">Continue offline</a></div>
+      <div class="auth-links">
+        <button class="auth-link" onclick="enterOffline()">Continue offline</button>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- MAIN APP -->
+<!-- ══ RESET PASSWORD (shown when Supabase redirects back with token) ══ -->
+<div id="reset-screen" style="display:none;min-height:100vh;align-items:center;justify-content:center;padding:24px;">
+  <div class="auth-box">
+    <div class="auth-logo">Study Deck <span class="badge">FSRS</span></div>
+    <div class="auth-sub">Set a new password</div>
+    <div class="auth-form">
+      <div class="auth-field"><label class="auth-lbl">New Password</label><input class="auth-input" id="new-pw" type="password" placeholder="At least 8 characters"></div>
+      <div class="auth-field"><label class="auth-lbl">Confirm Password</label><input class="auth-input" id="new-pw2" type="password" placeholder="Repeat password"></div>
+      <div class="auth-err" id="reset-err"></div>
+      <div class="auth-ok"  id="reset-ok"></div>
+      <button class="btn btn-p" onclick="doPasswordReset()">Set New Password</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MAIN APP ══ -->
 <div id="main-app" style="display:none;flex-direction:column;min-height:100vh;">
 <header>
   <div class="logo">Study Deck <span class="badge">FSRS</span></div>
@@ -339,7 +375,7 @@ main{flex:1;padding:32px 28px;max-width:1080px;margin:0 auto;width:100%;}
     <button class="btn-icon" id="theme-btn" onclick="toggleTheme()" title="Toggle theme">☀️</button>
     <button class="btn-icon" onclick="openModal('modal-settings')" title="Settings">⚙️</button>
     <button class="btn btn-sm btn-p" onclick="openModal('modal-new-deck')">+ Deck</button>
-    <button class="btn btn-sm" onclick="handleLogout()" id="logout-btn" style="display:none">Exit</button>
+    <button class="btn btn-sm" id="logout-btn" onclick="handleLogout()" style="display:none">Exit</button>
   </div>
 </header>
 <nav class="tabs">
@@ -348,6 +384,7 @@ main{flex:1;padding:32px 28px;max-width:1080px;margin:0 auto;width:100%;}
   <button class="tab" data-page="progress" onclick="nav('progress',this)">Progress</button>
 </nav>
 <main>
+
   <!-- DASHBOARD -->
   <div id="page-dashboard" class="page active">
     <div class="stats">
@@ -365,6 +402,10 @@ main{flex:1;padding:32px 28px;max-width:1080px;margin:0 auto;width:100%;}
         <span class="bb-t">Study Shuffle →</span>
         <span class="bb-s">Weighted by case difficulty</span>
       </button>
+    </div>
+    <div class="invites-banner" id="invites-banner">
+      <div class="invites-banner-text" id="invites-text"></div>
+      <button class="btn btn-sm btn-p" onclick="openModal('modal-invites')">View</button>
     </div>
     <div class="sh"><div class="section-label">Your Decks</div></div>
     <div class="deck-list" id="deck-list"></div>
@@ -402,6 +443,7 @@ main{flex:1;padding:32px 28px;max-width:1080px;margin:0 auto;width:100%;}
     </div>
     <div class="pg-summary" id="pg-summary"></div>
   </div>
+
 </main>
 <nav class="mob-nav">
   <button class="mob-btn active" data-page="dashboard" onclick="nav('dashboard',this)"><span class="ic">🏠</span>Home</button>
@@ -410,7 +452,8 @@ main{flex:1;padding:32px 28px;max-width:1080px;margin:0 auto;width:100%;}
 </nav>
 </div><!-- /main-app -->
 
-<!-- MODALS -->
+<!-- ══ MODALS ══ -->
+
 <div class="overlay" id="modal-new-deck">
   <div class="modal">
     <div class="modal-title">New Deck</div>
@@ -425,18 +468,65 @@ main{flex:1;padding:32px 28px;max-width:1080px;margin:0 auto;width:100%;}
   </div>
 </div>
 
-<div class="overlay" id="modal-rename-deck">
+<div class="overlay" id="modal-deck-options">
   <div class="modal">
-    <div class="modal-title">Rename Deck</div>
+    <div class="modal-title" id="deck-opts-title">Deck Options</div>
     <div class="ef" style="margin-bottom:4px">
-      <label class="el">Name</label>
+      <label class="el">Deck Name</label>
       <input class="ei" id="rename-val" onkeydown="if(event.key==='Enter')renameDeck()">
     </div>
-    <div class="modal-actions">
-      <button class="btn btn-p" onclick="renameDeck()">Save</button>
-      <button class="btn" onclick="closeModal('modal-rename-deck')">Cancel</button>
-      <button class="btn btn-danger" onclick="deleteDeck()" style="margin-left:auto">Delete Deck</button>
+    <div class="tog-row">
+      <div><div class="tog-row-l">Deck enabled</div><div class="tog-row-s">Disabled decks are excluded from all study modes</div></div>
+      <div class="tog">
+        <button class="tog-opt active" id="tog-enabled"  onclick="setDeckEnabled(true)">On</button>
+        <button class="tog-opt"        id="tog-disabled" onclick="setDeckEnabled(false)">Off</button>
+      </div>
     </div>
+    <div class="modal-actions">
+      <button class="btn btn-p" onclick="renameDeck()">Save Name</button>
+      <button class="btn" onclick="openShareModal()">Share Deck</button>
+      <button class="btn" onclick="closeModal('modal-deck-options')">Cancel</button>
+      <button class="btn btn-danger" onclick="deleteDeck()" style="margin-left:auto">Delete</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="modal-share">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-title" id="share-title">Share Deck</div>
+    <div class="modal-tabs">
+      <button class="modal-tab active" onclick="switchShareTab('link',this)">Public Link</button>
+      <button class="modal-tab" onclick="switchShareTab('email',this)">Invite by Email</button>
+    </div>
+    <div class="modal-tab-panel active" id="share-link-panel">
+      <p style="font-size:13px;color:var(--muted);margin-bottom:12px">Anyone with this link can import a copy of your deck into their account.</p>
+      <div id="share-link-area">
+        <button class="btn btn-p" id="gen-link-btn" onclick="generateShareLink()">Generate Link</button>
+      </div>
+      <div id="share-link-list" style="margin-top:14px"></div>
+    </div>
+    <div class="modal-tab-panel" id="share-email-panel">
+      <p style="font-size:13px;color:var(--muted);margin-bottom:12px">Send an invite to a specific person. They'll see it on their dashboard.</p>
+      <div class="ef">
+        <label class="el">Recipient Email</label>
+        <input class="ei" id="invite-email" type="email" placeholder="colleague@example.com">
+      </div>
+      <div class="modal-actions" style="margin-top:12px">
+        <button class="btn btn-p" onclick="sendInvite()">Send Invite</button>
+      </div>
+      <div id="sent-invites-list" style="margin-top:14px"></div>
+    </div>
+    <div class="modal-actions" style="margin-top:4px">
+      <button class="btn" onclick="closeModal('modal-share')">Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="modal-invites">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-title">Pending Deck Invites</div>
+    <div id="invite-inbox" style="display:flex;flex-direction:column;gap:10px;max-height:320px;overflow-y:auto;"></div>
+    <div class="modal-actions"><button class="btn" onclick="closeModal('modal-invites')">Close</button></div>
   </div>
 </div>
 
@@ -464,8 +554,8 @@ main{flex:1;padding:32px 28px;max-width:1080px;margin:0 auto;width:100%;}
 <script>
 'use strict';
 // ════════════════════════════════════════════════
-//  SUPABASE CONFIG — replace these two values
-//  after completing Step 4 of SETUP.md
+//  CONFIG — paste your values from Supabase Dashboard
+//  Project Settings → API → Project URL + anon public key
 // ════════════════════════════════════════════════
 const SB_URL = 'https://zhctcpxhgtrjrpawhthl.supabase.co/rest/v1/';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpoY3RjcHhoZ3RyanJwYXdodGhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2ODc3OTUsImV4cCI6MjA5NTI2Mzc5NX0.yriJ5BWWLZi2hTCt5DvyjrePBrsLcW-jJVWscqr9V4M';
@@ -479,17 +569,17 @@ function initSB() {
 }
 
 // ── DATA ────────────────────────────────────────
-const KEY = 'studydeck4';
+const KEY = 'studydeck5';
 function loadLocal()  { try { return JSON.parse(localStorage.getItem(KEY)) || seed(); } catch(e) { return seed(); } }
 function saveLocal()  { localStorage.setItem(KEY, JSON.stringify(db)); }
 
 function seed() {
   return {
-    decks:  [{ id:'d1', name:'Cardiology' }],
+    decks:  [{ id:'d1', name:'Cardiology', disabled: false }],
     cases:  [{ id:'ca1', deckId:'d1', title:'Acute Coronary Syndrome',
       stems: [
-        'A 58-year-old male smoker presents with 45 min of crushing central chest pain radiating to the left arm, diaphoresis and nausea. BP 150/90, HR 98, SpO₂ 96%. ECG: 2mm ST elevation in II, III, aVF.',
-        'A 64-year-old diabetic female reports fatigue, mild dyspnoea and jaw pain for 2 hours — no classic chest pain. ECG shows ST elevation in II, III, aVF. Troponin pending.'
+        '<p>A 58-year-old male smoker presents with 45 min of crushing central chest pain radiating to the left arm, diaphoresis and nausea. BP 150/90, HR 98, SpO₂ 96%. ECG: 2mm ST elevation in II, III, aVF.</p>',
+        '<p>A 64-year-old diabetic female reports fatigue, mild dyspnoea and jaw pain for 2 hours — no classic chest pain. ECG shows ST elevation in II, III, aVF. Troponin pending.</p>'
       ]
     }],
     cards: [
@@ -513,9 +603,8 @@ const TODAY = today();
 let db = loadLocal();
 
 // ── SYNC ────────────────────────────────────────
-function setSyncPill(state, text) {
+function setPill(state, text) {
   const el = document.getElementById('sync-pill');
-  if (!el) return;
   el.className = 'sync-pill show ' + state;
   el.textContent = text;
   if (state==='ok') setTimeout(() => el.classList.remove('show'), 3000);
@@ -523,15 +612,15 @@ function setSyncPill(state, text) {
 
 async function syncUp() {
   if (!sb || !currentUser) return;
-  setSyncPill('syncing', '↑ Saving…');
+  setPill('busy','↑ Saving…');
   try {
     const { error } = await sb.from('user_data').upsert(
       { user_id: currentUser.id, data: JSON.stringify(db), updated_at: new Date().toISOString() },
       { onConflict: 'user_id' }
     );
     if (error) throw error;
-    setSyncPill('ok', '✓ Saved');
-  } catch(e) { setSyncPill('err', '✗ Sync error'); }
+    setPill('ok','✓ Saved');
+  } catch(e) { setPill('err','✗ Sync error'); }
 }
 
 async function syncDown() {
@@ -540,7 +629,7 @@ async function syncDown() {
     const { data, error } = await sb.from('user_data').select('data').eq('user_id', currentUser.id).single();
     if (error && error.code !== 'PGRST116') throw error;
     if (data && data.data) { db = JSON.parse(data.data); saveLocal(); }
-  } catch(e) { console.warn('Sync down failed', e); }
+  } catch(e) { console.warn('syncDown:', e); }
 }
 
 function scheduleSave() {
@@ -552,10 +641,13 @@ function scheduleSave() {
 // ── AUTH ────────────────────────────────────────
 let authMode = 'login';
 
-function switchAuthTab(mode) {
+function setAuthMode(mode) {
   authMode = mode;
-  document.querySelectorAll('.auth-tab').forEach((t,i) => t.classList.toggle('active', i===(mode==='login'?0:1)));
-  document.getElementById('auth-btn').textContent = mode==='login' ? 'Log In' : 'Create Account';
+  document.querySelectorAll('.auth-tab').forEach((t,i) => {
+    t.classList.toggle('active', (mode==='login'&&i===0)||(mode==='signup'&&i===1)||(mode==='reset'&&i===2));
+  });
+  document.getElementById('pw-field').style.display = mode==='reset' ? 'none' : '';
+  document.getElementById('auth-btn').textContent = mode==='login' ? 'Log In' : mode==='signup' ? 'Create Account' : 'Send Reset Email';
   document.getElementById('auth-err').classList.remove('show');
   document.getElementById('auth-ok').classList.remove('show');
 }
@@ -567,35 +659,53 @@ async function handleAuth() {
   const okEl  = document.getElementById('auth-ok');
   errEl.classList.remove('show'); okEl.classList.remove('show');
   if (!sb) { enterOffline(); return; }
-  if (!email || !pw) { errEl.textContent='Please fill in both fields.'; errEl.classList.add('show'); return; }
+  if (!email) { errEl.textContent='Please enter your email.'; errEl.classList.add('show'); return; }
+  if (authMode!=='reset' && !pw) { errEl.textContent='Please enter your password.'; errEl.classList.add('show'); return; }
   const btn = document.getElementById('auth-btn');
   btn.textContent='…'; btn.disabled=true;
   try {
-    const result = authMode==='login'
-      ? await sb.auth.signInWithPassword({ email, password: pw })
-      : await sb.auth.signUp({ email, password: pw });
-    if (result.error) { errEl.textContent=result.error.message; errEl.classList.add('show'); }
-    else if (authMode==='signup' && !result.data.session) {
-      okEl.textContent='Check your email to confirm your account, then log in.'; okEl.classList.add('show');
+    if (authMode==='reset') {
+      const { error } = await sb.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.href.split('?')[0]
+      });
+      if (error) throw error;
+      okEl.textContent='Password reset email sent — check your inbox.'; okEl.classList.add('show');
+    } else if (authMode==='login') {
+      const { data, error } = await sb.auth.signInWithPassword({ email, password: pw });
+      if (error) throw error;
+      currentUser = data.user; await syncDown(); enterApp();
     } else {
-      currentUser = result.data.user;
-      await syncDown();
-      enterApp();
+      const { data, error } = await sb.auth.signUp({ email, password: pw });
+      if (error) throw error;
+      if (!data.session) { okEl.textContent='Check your email to confirm your account, then log in.'; okEl.classList.add('show'); }
+      else { currentUser=data.user; await syncDown(); enterApp(); }
     }
-  } catch(e) { errEl.textContent='An error occurred. Check your connection.'; errEl.classList.add('show'); }
-  finally { btn.textContent=authMode==='login'?'Log In':'Create Account'; btn.disabled=false; }
+  } catch(e) { errEl.textContent=e.message||'An error occurred.'; errEl.classList.add('show'); }
+  finally { btn.textContent=authMode==='login'?'Log In':authMode==='signup'?'Create Account':'Send Reset Email'; btn.disabled=false; }
 }
 
-function enterOffline() {
-  isOffline=true; db=loadLocal(); enterApp();
+async function doPasswordReset() {
+  const pw  = document.getElementById('new-pw').value;
+  const pw2 = document.getElementById('new-pw2').value;
+  const errEl=document.getElementById('reset-err'), okEl=document.getElementById('reset-ok');
+  errEl.classList.remove('show'); okEl.classList.remove('show');
+  if (pw.length < 8) { errEl.textContent='Password must be at least 8 characters.'; errEl.classList.add('show'); return; }
+  if (pw !== pw2)    { errEl.textContent='Passwords do not match.'; errEl.classList.add('show'); return; }
+  const { error } = await sb.auth.updateUser({ password: pw });
+  if (error) { errEl.textContent=error.message; errEl.classList.add('show'); return; }
+  okEl.textContent='Password updated! Redirecting…'; okEl.classList.add('show');
+  setTimeout(() => { document.getElementById('reset-screen').style.display='none'; enterApp(); }, 1500);
 }
+
+function enterOffline() { isOffline=true; db=loadLocal(); enterApp(); }
 
 function enterApp() {
   document.getElementById('auth-screen').style.display='none';
-  const app=document.getElementById('main-app');
-  app.style.display='flex';
-  if (currentUser) document.getElementById('logout-btn').style.display='inline-flex';
+  document.getElementById('reset-screen').style.display='none';
+  const app=document.getElementById('main-app'); app.style.display='flex';
+  if (currentUser) document.getElementById('logout-btn').style.display='';
   applyTheme(); renderDash();
+  if (currentUser) checkInvites();
 }
 
 async function handleLogout() {
@@ -606,53 +716,48 @@ async function handleLogout() {
   document.getElementById('auth-screen').style.display='flex';
 }
 
-// ── FSRS-LITE ───────────────────────────────────
-const F = {
-  iD(g)      { return Math.min(10,Math.max(1,5-(g-3)*0.72)); },
-  iS(g)      { return [1,1,4,14][g-1]||1; },
-  nD(d,g)    { return Math.min(10,Math.max(1,d-0.72*(g-3)*(10-d)/9)); },
-  ret(s,dy)  { return Math.pow(0.9,dy/s); },
-  nS(s,d,r,g){ if(g<3)return Math.max(1,s*0.2);const hp=g===2?.8:1,eb=g===4?1.3:1;return s*(Math.exp(1.3)*(11-d)*Math.pow(s,-0.2)*(Math.exp((1-r)*1.0)-1)*hp*eb+1); },
+// ── FSRS ────────────────────────────────────────
+const F={
+  iD(g){return Math.min(10,Math.max(1,5-(g-3)*0.72));},
+  iS(g){return [1,1,4,14][g-1]||1;},
+  nD(d,g){return Math.min(10,Math.max(1,d-0.72*(g-3)*(10-d)/9));},
+  ret(s,dy){return Math.pow(0.9,dy/s);},
+  nS(s,d,r,g){if(g<3)return Math.max(1,s*0.2);const hp=g===2?.8:1,eb=g===4?1.3:1;return s*(Math.exp(1.3)*(11-d)*Math.pow(s,-0.2)*(Math.exp((1-r)*1.0)-1)*hp*eb+1);},
   sched(card,g){
     const now=new Date(),days=card.rated?Math.max(0,(now-new Date(card.rated))/86400000):0;
     let s=card.stab,d=card.diff,reps=card.reps,lap=card.lapses,state=card.state;
     if(state==='new'){d=this.iD(g);s=this.iS(g);state=g<3?'learning':'review';}
     else{const r=this.ret(s,days);d=this.nD(d,g);s=this.nS(s,d,r,g);if(g<3){lap++;state='relearn';}else state='review';}
-    reps++;
-    const due=new Date(now);due.setDate(due.getDate()+Math.max(1,Math.round(s)));
+    reps++;const due=new Date(now);due.setDate(due.getDate()+Math.max(1,Math.round(s)));
     return{stab:s,diff:d,reps,lapses:lap,state,due:due.toISOString().slice(0,10),rated:now.toISOString()};
   },
-  ivls(card){ return [1,2,3,4].map(g=>{const d=Math.max(1,Math.round(this.sched(card,g).stab));return d<7?d+'d':d<30?Math.round(d/7)+'w':Math.round(d/30)+'mo';}); }
+  ivls(card){return[1,2,3,4].map(g=>{const d=Math.max(1,Math.round(this.sched(card,g).stab));return d<7?d+'d':d<30?Math.round(d/7)+'w':Math.round(d/30)+'mo'});}
 };
 
 // ── CASE DIFFICULTY ─────────────────────────────
-// Score 0..1 where 1 = hardest. Combined: lapses (60%) + recent poor ratings (40%)
 function caseDifficulty(cs) {
-  const cards = (db.cards||[]).filter(c=>c.caseId===cs.id);
-  if (!cards.length) return 0;
-  // Lapse component: avg lapses normalised (cap at 5 = max)
-  const avgLapses = cards.reduce((a,c)=>a+c.lapses,0) / cards.length;
-  const lapseScore = Math.min(1, avgLapses/5);
-  // Recency component: avg stability inverted (low stability = struggled recently, cap at 21d)
-  const reviewed = cards.filter(c=>c.reps>0);
-  const recencyScore = reviewed.length
-    ? reviewed.reduce((a,c)=>a+(1-Math.min(1,c.stab/21)),0) / reviewed.length
-    : 0.5; // unreviewed cards count as medium
-  return lapseScore*0.6 + recencyScore*0.4;
+  const cards=(db.cards||[]).filter(c=>c.caseId===cs.id);
+  if(!cards.length)return 0;
+  const avgLapses=cards.reduce((a,c)=>a+c.lapses,0)/cards.length;
+  const lapseScore=Math.min(1,avgLapses/5);
+  const reviewed=cards.filter(c=>c.reps>0);
+  const recencyScore=reviewed.length?reviewed.reduce((a,c)=>a+(1-Math.min(1,c.stab/21)),0)/reviewed.length:0.5;
+  return lapseScore*0.6+recencyScore*0.4;
 }
 
-// Build a weighted shuffle of cases — harder cases appear more
 function weightedCaseShuffle(cases) {
-  const scored = cases.map(cs => ({ cs, score: caseDifficulty(cs)+0.1 }));
-  const total  = scored.reduce((a,x)=>a+x.score,0);
-  // Weighted reservoir sample
-  const result=[], remaining=[...scored];
+  const scored=cases.map(cs=>({cs,score:caseDifficulty(cs)+0.1}));
+  const result=[],remaining=[...scored];
   while(remaining.length){
-    let r=Math.random()*remaining.reduce((a,x)=>a+x.score,0), idx=0;
+    let r=Math.random()*remaining.reduce((a,x)=>a+x.score,0),idx=0;
     for(;idx<remaining.length-1;idx++){r-=remaining[idx].score;if(r<=0)break;}
     result.push(remaining.splice(idx,1)[0].cs);
   }
   return result;
+}
+
+function activeDeckIds() {
+  return (db.decks||[]).filter(d=>!d.disabled).map(d=>d.id);
 }
 
 // ── THEME ───────────────────────────────────────
@@ -671,24 +776,30 @@ function nav(page,el){
 
 // ── DASHBOARD ───────────────────────────────────
 function renderDash(){
-  const cards=db.cards||[];
+  const active=activeDeckIds();
+  const cards=(db.cards||[]).filter(c=>active.includes(c.deckId));
+  const allCards=db.cards||[];
   const due=cards.filter(c=>c.due<=TODAY&&c.state!=='new');
   const nw=cards.filter(c=>c.state==='new');
   document.getElementById('s-due').textContent=due.length;
   document.getElementById('s-new').textContent=nw.length;
-  document.getElementById('s-tot').textContent=cards.length;
+  document.getElementById('s-tot').textContent=allCards.length;
   document.getElementById('s-str').textContent=(db.streak||{}).count||0;
 
   const list=document.getElementById('deck-list');
-  if(!(db.decks||[]).length){list.innerHTML='<div style="padding:36px;text-align:center;font-size:13px;color:var(--muted)">No decks yet — press + Deck above.</div>';return;}
+  if(!(db.decks||[]).length){list.innerHTML='<div style="padding:36px;text-align:center;font-size:13px;color:var(--muted)">No decks yet — press + Deck.</div>';return;}
   list.innerHTML=(db.decks||[]).map(deck=>{
-    const dc=cards.filter(c=>c.deckId===deck.id);
+    const dc=allCards.filter(c=>c.deckId===deck.id);
     const d=dc.filter(c=>c.due<=TODAY&&c.state!=='new').length;
     const n=dc.filter(c=>c.state==='new').length;
     const r=dc.filter(c=>c.state==='review'||c.state==='relearn').length;
     const cs=(db.cases||[]).filter(c=>c.deckId===deck.id).length;
-    return`<div class="deck-row">
-      <div class="dk-info"><div class="dk-name">${esc(deck.name)}</div><div class="dk-meta">${dc.length} cards · ${cs} cases</div></div>
+    const isDisabled=deck.disabled;
+    return`<div class="deck-row${isDisabled?' disabled':''}">
+      <div class="dk-info">
+        <div class="dk-name">${esc(deck.name)}${isDisabled?' <span style="font-size:11px;color:var(--muted);font-weight:400">(disabled)</span>':''}</div>
+        <div class="dk-meta">${dc.length} cards · ${cs} cases</div>
+      </div>
       <div class="dk-counts">
         <div class="dkc due"><span class="v">${d}</span><span class="l">Due</span></div>
         <div class="dkc new"><span class="v">${n}</span><span class="l">New</span></div>
@@ -696,7 +807,7 @@ function renderDash(){
       </div>
       <div class="dk-btns">
         <button class="study-btn" onclick="startStudyDeck('${deck.id}')">Study →</button>
-        <button class="btn-icon" style="width:28px;height:28px;font-size:13px" onclick="openRename('${deck.id}')" title="Rename / Delete">✎</button>
+        <button class="btn-icon" style="width:28px;height:28px;font-size:13px" onclick="openDeckOptions('${deck.id}')" title="Options">⚙</button>
       </div>
     </div>`;
   }).join('');
@@ -709,32 +820,27 @@ function startStudyDeck(id){_go('deck',id);}
 function startStudy(mode){_go(mode,null);}
 
 function _go(mode,deckId){
-  qMode=mode; shownStems.clear();
-  const cards=db.cards||[];
+  qMode=mode;shownStems.clear();
+  const allCards=db.cards||[];
   const lim=(db.settings||{}).newLimit||20;
+  const active=activeDeckIds();
 
   if(mode==='deck'){
-    const allDue=cards.filter(c=>c.deckId===deckId&&c.due<=TODAY&&c.state!=='new');
-    const allNew=cards.filter(c=>c.deckId===deckId&&c.state==='new').slice(0,lim);
-    queue=orderByCases([...allDue,...allNew],deckId);
+    const due=allCards.filter(c=>c.deckId===deckId&&c.due<=TODAY&&c.state!=='new');
+    const nw=allCards.filter(c=>c.deckId===deckId&&c.state==='new').slice(0,lim);
+    queue=orderByCases([...due,...nw],deckId);
     queue._deckId=deckId;
-  } else if(mode==='due'){
-    const allDue=cards.filter(c=>c.due<=TODAY&&c.state!=='new');
-    const allNew=cards.filter(c=>c.state==='new').slice(0,lim*2);
-    queue=buildCaseOrdered([...allDue,...allNew]);
-  } else {
-    // Study Shuffle: weight cases by difficulty, show all cards in case order
-    const cases=(db.cases||[]);
-    const shuffledCases=weightedCaseShuffle(cases);
+  }else if(mode==='due'){
+    const due=allCards.filter(c=>active.includes(c.deckId)&&c.due<=TODAY&&c.state!=='new');
+    const nw=allCards.filter(c=>active.includes(c.deckId)&&c.state==='new').slice(0,lim*2);
+    queue=buildCaseOrdered([...due,...nw]);
+  }else{
+    const activeCases=(db.cases||[]).filter(cs=>active.includes(cs.deckId));
+    const shuffled=weightedCaseShuffle(activeCases);
     queue=[];
-    shuffledCases.forEach(cs=>{
-      const cCards=cards.filter(c=>c.caseId===cs.id);
-      queue.push(...cCards);
-    });
-    // also add uncased cards shuffled
+    shuffled.forEach(cs=>{allCards.filter(c=>c.caseId===cs.id).forEach(c=>queue.push(c));});
     const cased=new Set(queue.map(c=>c.id));
-    const uncased=cards.filter(c=>!cased.has(c.id));
-    shuffle(uncased).forEach(c=>queue.push(c));
+    shuffle(allCards.filter(c=>active.includes(c.deckId)&&!cased.has(c.id))).forEach(c=>queue.push(c));
   }
   qIdx=0;flipped=false;
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -742,7 +848,6 @@ function _go(mode,deckId){
   renderStudy();
 }
 
-// Order cards by case definition order, then uncased
 function orderByCases(pool,deckId){
   const cases=(db.cases||[]).filter(c=>c.deckId===deckId);
   const result=[],used=new Set();
@@ -751,19 +856,14 @@ function orderByCases(pool,deckId){
   return result;
 }
 
-// For due/new: group by case if cards share a case, otherwise keep order
 function buildCaseOrdered(pool){
   const seen=new Set(),result=[],caseQueued=new Set();
   pool.forEach(c=>{
     if(seen.has(c.id))return;
     if(c.caseId&&!caseQueued.has(c.caseId)){
-      // queue all cards for this case that are in pool, in defined order
-      const caseCards=(db.cards||[]).filter(x=>x.caseId===c.caseId);
-      caseCards.forEach(x=>{if(!seen.has(x.id)){result.push(x);seen.add(x.id);}});
+      (db.cards||[]).filter(x=>x.caseId===c.caseId).forEach(x=>{if(!seen.has(x.id)){result.push(x);seen.add(x.id);}});
       caseQueued.add(c.caseId);
-    } else if(!c.caseId){
-      result.push(c);seen.add(c.id);
-    }
+    }else if(!c.caseId){result.push(c);seen.add(c.id);}
   });
   return result;
 }
@@ -793,7 +893,6 @@ function renderStudy(){
     if(show){
       shownStems.add(caseObj.id);
       const s=caseObj.stems[Math.floor(Math.random()*caseObj.stems.length)];
-      // stems stored as HTML now
       stemHtml=`<div class="stem"><div class="stem-body">${s}</div></div>`;
     }
   }
@@ -847,25 +946,21 @@ function rate(g){
   if(i!==-1)Object.assign(db.cards[i],res);
   if(!db.ratingLog)db.ratingLog={};
   if(!db.ratingLog[TODAY])db.ratingLog[TODAY]={total:0,good:0};
-  db.ratingLog[TODAY].total++;
-  if(g>=3)db.ratingLog[TODAY].good++;
+  db.ratingLog[TODAY].total++;if(g>=3)db.ratingLog[TODAY].good++;
   if(g===1)queue.push({...card,...res});
   qIdx++;flipped=false;scheduleSave();renderStudy();
 }
 
 function bump(){
-  const s=db.streak||{date:null,count:0};
-  if(s.date===TODAY)return;
+  const s=db.streak||{date:null,count:0};if(s.date===TODAY)return;
   const y=new Date();y.setDate(y.getDate()-1);
-  s.count=s.date===y.toISOString().slice(0,10)?s.count+1:1;
-  s.date=TODAY;db.streak=s;
+  s.count=s.date===y.toISOString().slice(0,10)?s.count+1:1;s.date=TODAY;db.streak=s;
 }
 
 document.addEventListener('keydown',e=>{
   if(!document.getElementById('page-study').classList.contains('active'))return;
   if(e.code==='Space'||e.code==='Enter'){e.preventDefault();flip();}
-  if(e.key==='1')rate(1);if(e.key==='2')rate(2);
-  if(e.key==='3')rate(3);if(e.key==='4')rate(4);
+  if(e.key==='1')rate(1);if(e.key==='2')rate(2);if(e.key==='3')rate(3);if(e.key==='4')rate(4);
 });
 
 // ── EDITOR ──────────────────────────────────────
@@ -878,24 +973,18 @@ function renderEditor(){
 
 function renderRail(){
   document.getElementById('rail-body').innerHTML=(db.decks||[]).map(d=>`
-    <div class="rail-item${d.id===eDeckId?' active':''}" data-deck="${d.id}" onclick="selectDeck('${d.id}')">
+    <div class="rail-item${d.id===eDeckId?' active':''}${d.disabled?' deck-disabled':''}" data-deck="${d.id}" onclick="selectDeck('${d.id}')">
       <span class="rail-name">${esc(d.name)}</span>
       <span class="rail-n">${(db.cards||[]).filter(c=>c.deckId===d.id).length}</span>
-      <button class="icon-btn" data-action="rename" data-deck="${d.id}" title="Rename">✎</button>
+      <button class="icon-btn" data-action="opts" data-deck="${d.id}" title="Options">⚙</button>
     </div>`).join('')||'<div style="padding:14px;font-size:12px;color:var(--muted)">No decks.</div>';
 }
 
 document.getElementById('rail-body').addEventListener('click',function(e){
-  const btn=e.target.closest('[data-action="rename"]');
-  if(!btn)return;
-  e.stopPropagation();
-  openRename(btn.dataset.deck);
+  const btn=e.target.closest('[data-action="opts"]');if(!btn)return;e.stopPropagation();openDeckOptions(btn.dataset.deck);
 });
 
-function selectDeck(id){
-  eDeckId=id;eCaseId=null;eSelType=null;eSelKey=null;
-  renderRail();renderCaseCol();showEmptyPanel();
-}
+function selectDeck(id){eDeckId=id;eCaseId=null;eSelType=null;eSelKey=null;renderRail();renderCaseCol();showEmptyPanel();}
 
 function renderCaseCol(){
   const deck=(db.decks||[]).find(d=>d.id===eDeckId);
@@ -906,32 +995,25 @@ function renderCaseCol(){
   if(!eDeckId){body.innerHTML='<div style="padding:14px;font-size:12px;color:var(--muted)">Select a deck.</div>';return;}
   if(!cases.length){body.innerHTML='<div style="padding:14px;font-size:12px;color:var(--muted)">No cases yet.</div>';return;}
   body.innerHTML=cases.map(cs=>{
-    const cCards=(db.cards||[]).filter(c=>c.caseId===cs.id);
-    const stems=cs.stems||[];
-    const open=cs.id===eCaseId;
+    const cCards=(db.cards||[]).filter(c=>c.caseId===cs.id),stems=cs.stems||[],open=cs.id===eCaseId;
     const stemRows=stems.map((s,i)=>{
       const key=cs.id+'__'+i,sel=eSelType==='stem'&&eSelKey===key;
       const preview=s.replace(/<[^>]*>/g,'').slice(0,40)||'(empty)';
       return`<div class="sub-row${sel?' sel stem-sel':''}" data-action="selStem" data-case="${cs.id}" data-idx="${i}">
-        <span class="sub-pill pill-s">S${i+1}</span>
-        <span class="sub-text">${esc(preview)}</span>
-        <button class="sub-del" data-action="delStem" data-case="${cs.id}" data-idx="${i}" title="Delete stem">×</button>
-      </div>`;
+        <span class="sub-pill pill-s">S${i+1}</span><span class="sub-text">${esc(preview)}</span>
+        <button class="sub-del" data-action="delStem" data-case="${cs.id}" data-idx="${i}">×</button></div>`;
     }).join('');
     const cardRows=cCards.map(c=>{
       const sel=eSelType==='card'&&eSelKey===c.id;
       return`<div class="sub-row${sel?' sel':''}" data-action="selCard" data-card="${c.id}" data-case="${cs.id}">
-        <span class="sub-pill pill-q">Q</span>
-        <span class="sub-text">${escPlain(c.q)}</span>
-        <button class="sub-del" data-action="delCard" data-card="${c.id}" title="Delete card">×</button>
-      </div>`;
+        <span class="sub-pill pill-q">Q</span><span class="sub-text">${escPlain(c.q)}</span>
+        <button class="sub-del" data-action="delCard" data-card="${c.id}">×</button></div>`;
     }).join('');
     return`<div class="case-item${open?' open':''}" data-caseid="${cs.id}">
       <div class="case-hdr-row" data-action="toggleCase" data-case="${cs.id}">
-        <span class="exp">▶</span>
-        <span class="case-title-t">${esc(cs.title)}</span>
+        <span class="exp">▶</span><span class="case-title-t">${esc(cs.title)}</span>
         <span class="case-counts">${stems.length}S·${cCards.length}Q</span>
-        <button class="sub-del" data-action="delCase" data-case="${cs.id}" title="Delete case">×</button>
+        <button class="sub-del" data-action="delCase" data-case="${cs.id}">×</button>
       </div>
       <div class="case-sub">
         ${stemRows}
@@ -943,12 +1025,9 @@ function renderCaseCol(){
   }).join('');
 }
 
-// Single delegated listener — all case-column interactions
 document.getElementById('case-body').addEventListener('click',function(e){
-  const el=e.target.closest('[data-action]');if(!el)return;
-  e.stopPropagation();
-  const a=el.dataset.action,csId=el.dataset.case,cId=el.dataset.card;
-  const idx=el.dataset.idx!==undefined?parseInt(el.dataset.idx):null;
+  const el=e.target.closest('[data-action]');if(!el)return;e.stopPropagation();
+  const a=el.dataset.action,csId=el.dataset.case,cId=el.dataset.card,idx=el.dataset.idx!==undefined?parseInt(el.dataset.idx):null;
   if(a==='toggleCase')toggleCase(csId);
   else if(a==='selStem')selStem(csId,idx);
   else if(a==='selCard')selCard(cId,csId);
@@ -973,13 +1052,8 @@ function showCasePanel(id){
   const cs=(db.cases||[]).find(c=>c.id===id);if(!cs)return;
   document.getElementById('ed-main').innerHTML=`
     <div style="font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted)">Case</div>
-    <div class="ef">
-      <label class="el">Title</label>
-      <input class="ei" id="ei-ct" value="${esc(cs.title)}" oninput="saveCase('${id}','title',this.value)" placeholder="e.g. Acute MI">
-    </div>
-    <div style="font-size:13px;color:var(--muted);line-height:1.6">
-      <strong style="color:var(--text)">${(cs.stems||[]).length}</strong> stem${(cs.stems||[]).length!==1?'s':''} — one randomly selected per session.
-    </div>
+    <div class="ef"><label class="el">Title</label><input class="ei" id="ei-ct" value="${esc(cs.title)}" oninput="saveCase('${id}','title',this.value)" placeholder="e.g. Acute MI"></div>
+    <div style="font-size:13px;color:var(--muted);line-height:1.6"><strong style="color:var(--text)">${(cs.stems||[]).length}</strong> stem${(cs.stems||[]).length!==1?'s':''} — one randomly selected per session.</div>
     <div class="ed-actions">
       <button class="btn btn-sm btn-p" onclick="addStem('${id}')">+ Add Stem</button>
       <button class="btn btn-sm btn-p" onclick="addCard('${id}')">+ Add Card</button>
@@ -989,18 +1063,11 @@ function showCasePanel(id){
 
 function showStemPanel(csId,idx){
   const cs=(db.cases||[]).find(c=>c.id===csId);if(!cs)return;
-  const stems=cs.stems||[];
-  const stem=stems[idx]||'';
+  const stems=cs.stems||[],stem=stems[idx]||'';
   document.getElementById('ed-main').innerHTML=`
     <div style="font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--a2)">Stem ${idx+1} of ${stems.length} — ${esc(cs.title)}</div>
-    <div class="ef">
-      <label class="el">Clinical Vignette</label>
-      <div class="rte-wrap">
-        ${buildToolbar('rte-stem')}
-        <div class="rte-area stem-rte tall" id="rte-stem" contenteditable="true"
-          oninput="saveStemHTML('${csId}',${idx})"
-          onkeydown="handleTab(event)">${stem||'<p>Enter vignette here…</p>'}</div>
-      </div>
+    <div class="ef"><label class="el">Clinical Vignette</label>
+      <div class="rte-wrap">${buildToolbar('rte-stem')}<div class="rte-area stem-rte tall" id="rte-stem" contenteditable="true" oninput="saveStemHTML('${csId}',${idx})" onkeydown="handleTab(event)">${stem||'<p></p>'}</div></div>
     </div>
     <p style="font-size:12px;color:var(--muted)">One stem is randomly picked per case session.</p>
     <button class="btn btn-sm btn-danger" onclick="delStem('${csId}',${idx})">Delete this Stem</button>`;
@@ -1011,39 +1078,23 @@ function showCardPanel(id){
   const cs=c.caseId?(db.cases||[]).find(x=>x.id===c.caseId):null;
   document.getElementById('ed-main').innerHTML=`
     ${cs?`<div style="font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--a2)">Card in: ${esc(cs.title)}</div>`:''}
-    <div class="ef">
-      <label class="el">Front — Question</label>
-      <div class="rte-wrap">
-        ${buildToolbar('rte-q')}
-        <div class="rte-area" id="rte-q" contenteditable="true"
-          oninput="saveCardHTML('${id}','q')"
-          onkeydown="handleTab(event)">${c.q}</div>
-      </div>
+    <div class="ef"><label class="el">Front — Question</label>
+      <div class="rte-wrap">${buildToolbar('rte-q')}<div class="rte-area" id="rte-q" contenteditable="true" oninput="saveCardHTML('${id}','q')" onkeydown="handleTab(event)">${c.q}</div></div>
     </div>
-    <div class="ef">
-      <label class="el">Back — Answer</label>
-      <div class="rte-wrap">
-        ${buildToolbar('rte-a')}
-        <div class="rte-area tall" id="rte-a" contenteditable="true"
-          oninput="saveCardHTML('${id}','a')"
-          onkeydown="handleTab(event)">${c.a}</div>
-      </div>
+    <div class="ef"><label class="el">Back — Answer</label>
+      <div class="rte-wrap">${buildToolbar('rte-a')}<div class="rte-area tall" id="rte-a" contenteditable="true" oninput="saveCardHTML('${id}','a')" onkeydown="handleTab(event)">${c.a}</div></div>
     </div>
     <div class="card-meta">
       <span>State: <span class="tag-${c.state}">${c.state}</span></span>
-      <span>Reps: ${c.reps}</span>
-      <span>Stability: ${c.stab.toFixed(1)}d</span>
-      <span>Due: ${c.due}</span>
+      <span>Reps: ${c.reps}</span><span>Stability: ${c.stab.toFixed(1)}d</span><span>Due: ${c.due}</span>
     </div>
-    <div class="ed-actions">
-      <button class="btn btn-sm" onclick="resetCard('${id}')">Reset Progress</button>
-    </div>`;
+    <div class="ed-actions"><button class="btn btn-sm" onclick="resetCard('${id}')">Reset Progress</button></div>`;
 }
 
-function buildToolbar(targetId){
+function buildToolbar(tid){
   return`<div class="rte-bar">
-    <button class="rtb" title="Bold"   onmousedown="event.preventDefault();document.execCommand('bold')"><b>B</b></button>
-    <button class="rtb" title="Italic" onmousedown="event.preventDefault();document.execCommand('italic')"><i>I</i></button>
+    <button class="rtb" onmousedown="event.preventDefault();document.execCommand('bold')"><b>B</b></button>
+    <button class="rtb" onmousedown="event.preventDefault();document.execCommand('italic')"><i>I</i></button>
     <div class="rts"></div>
     <button class="rtb" onmousedown="event.preventDefault();document.execCommand('formatBlock',false,'h1')">H1</button>
     <button class="rtb" onmousedown="event.preventDefault();document.execCommand('formatBlock',false,'h2')">H2</button>
@@ -1051,20 +1102,17 @@ function buildToolbar(targetId){
     <div class="rts"></div>
     <button class="rtb" onmousedown="event.preventDefault();document.execCommand('insertUnorderedList')">• List</button>
     <button class="rtb" onmousedown="event.preventDefault();document.execCommand('insertOrderedList')">1. List</button>
-    <button class="rtb" title="Indent (Tab)"   onmousedown="event.preventDefault();document.execCommand('indent')">→</button>
-    <button class="rtb" title="Outdent (⇧Tab)" onmousedown="event.preventDefault();document.execCommand('outdent')">←</button>
+    <button class="rtb" onmousedown="event.preventDefault();document.execCommand('indent')">→</button>
+    <button class="rtb" onmousedown="event.preventDefault();document.execCommand('outdent')">←</button>
     <div class="rts"></div>
     <button class="rtb" onmousedown="event.preventDefault();document.execCommand('formatBlock',false,'blockquote')">❝</button>
-    <button class="rtb" onmousedown="event.preventDefault();pickImg('${targetId}')">📷</button>
+    <button class="rtb" onmousedown="event.preventDefault();pickImg('${tid}')">📷</button>
   </div>`;
 }
 
-// Tab key handler for RTE areas
 function handleTab(e){
-  if(e.key!=='Tab')return;
-  e.preventDefault();
-  if(e.shiftKey){document.execCommand('outdent');}
-  else{document.execCommand('indent');}
+  if(e.key!=='Tab')return;e.preventDefault();
+  e.shiftKey?document.execCommand('outdent'):document.execCommand('indent');
 }
 
 function pickImg(elId){
@@ -1079,8 +1127,7 @@ function pickImg(elId){
       el.dispatchEvent(new Event('input'));
     };
     reader.readAsDataURL(f);
-  };
-  inp.click();
+  };inp.click();
 }
 
 function saveCardHTML(cardId,field){
@@ -1094,38 +1141,31 @@ function saveStemHTML(csId,idx){
   const el=document.getElementById('rte-stem');if(!el)return;
   const i=(db.cases||[]).findIndex(c=>c.id===csId);if(i===-1)return;
   if(!db.cases[i].stems)db.cases[i].stems=[];
-  db.cases[i].stems[idx]=el.innerHTML;
-  scheduleSave();
+  db.cases[i].stems[idx]=el.innerHTML;scheduleSave();
 }
 
-// ── MUTATIONS ───────────────────────────────────
+// mutations
 function addCase(){
   if(!eDeckId)return;
-  const cs={id:uid('cs'),deckId:eDeckId,title:'New Case',stems:['<p>Enter vignette here…</p>']};
-  if(!db.cases)db.cases=[];
-  db.cases.push(cs);
+  const cs={id:uid('cs'),deckId:eDeckId,title:'New Case',stems:['<p></p>']};
+  if(!db.cases)db.cases=[];db.cases.push(cs);
   eCaseId=cs.id;eSelType='case';eSelKey=cs.id;
   scheduleSave();renderCaseCol();showCasePanel(cs.id);
   setTimeout(()=>{const t=document.getElementById('ei-ct');if(t){t.focus();t.select();}},50);
 }
-
 function addStem(csId){
   const i=(db.cases||[]).findIndex(c=>c.id===csId);if(i===-1)return;
   if(!db.cases[i].stems)db.cases[i].stems=[];
-  const idx=db.cases[i].stems.length;
-  db.cases[i].stems.push('<p>Enter vignette here…</p>');
+  const idx=db.cases[i].stems.length;db.cases[i].stems.push('<p></p>');
   eCaseId=csId;eSelType='stem';eSelKey=csId+'__'+idx;
   scheduleSave();renderCaseCol();showStemPanel(csId,idx);
 }
-
 function delStem(csId,idx){
   if(!confirm('Delete this stem?'))return;
   const i=(db.cases||[]).findIndex(c=>c.id===csId);if(i===-1)return;
-  db.cases[i].stems.splice(idx,1);
-  eSelType='case';eSelKey=csId;
+  db.cases[i].stems.splice(idx,1);eSelType='case';eSelKey=csId;
   scheduleSave();renderCaseCol();showCasePanel(csId);
 }
-
 function addCard(csId){
   if(!eDeckId)return;
   const c=mkCard(uid('c'),eDeckId,csId,'New Question','<p>New Answer</p>');
@@ -1133,64 +1173,225 @@ function addCard(csId){
   eCaseId=csId;eSelType='card';eSelKey=c.id;
   scheduleSave();renderCaseCol();showCardPanel(c.id);
 }
-
 function delCase(id){
   if(!confirm('Delete this case and all its cards?'))return;
-  db.cases=(db.cases||[]).filter(c=>c.id!==id);
-  db.cards=(db.cards||[]).filter(c=>c.caseId!==id);
+  db.cases=(db.cases||[]).filter(c=>c.id!==id);db.cards=(db.cards||[]).filter(c=>c.caseId!==id);
   if(eCaseId===id){eCaseId=null;eSelType=null;eSelKey=null;}
   scheduleSave();renderCaseCol();showEmptyPanel();
 }
-
 function delCard(id){
   if(!confirm('Delete this card?'))return;
   db.cards=(db.cards||[]).filter(c=>c.id!==id);
   if(eSelType==='card'&&eSelKey===id){eSelType=null;eSelKey=null;showEmptyPanel();}
   scheduleSave();renderCaseCol();
 }
-
 function saveCase(id,field,val){
   const i=(db.cases||[]).findIndex(c=>c.id===id);
   if(i!==-1){db.cases[i][field]=val;scheduleSave();}
   if(field==='title')renderCaseCol();
 }
-
 function resetCard(id){
   const i=(db.cards||[]).findIndex(c=>c.id===id);if(i===-1)return;
   Object.assign(db.cards[i],{state:'new',due:TODAY,stab:1,diff:5,reps:0,lapses:0,rated:null});
   scheduleSave();showCardPanel(id);
 }
 
-// ── DECK MANAGEMENT ─────────────────────────────
-function createDeck(){
-  const name=document.getElementById('new-deck-name').value.trim();if(!name)return;
-  if(!db.decks)db.decks=[];
-  const d={id:uid('d'),name};db.decks.push(d);
-  scheduleSave();closeModal('modal-new-deck');renderDash();
-  eDeckId=d.id;renderEditor();
-}
-
-let _renameId=null;
-function openRename(id){
-  _renameId=id;
+// ── DECK OPTIONS ─────────────────────────────────
+let _optDeckId=null;
+function openDeckOptions(id){
+  _optDeckId=id;
   const d=(db.decks||[]).find(x=>x.id===id);if(!d)return;
+  document.getElementById('deck-opts-title').textContent=d.name;
   document.getElementById('rename-val').value=d.name;
-  openModal('modal-rename-deck');
-  setTimeout(()=>{const i=document.getElementById('rename-val');if(i){i.focus();i.select();}},50);
+  document.getElementById('tog-enabled').classList.toggle('active',!d.disabled);
+  document.getElementById('tog-disabled').classList.toggle('active',!!d.disabled);
+  openModal('modal-deck-options');
+  setTimeout(()=>{const i=document.getElementById('rename-val');if(i){i.focus();}},50);
+}
+function setDeckEnabled(val){
+  document.getElementById('tog-enabled').classList.toggle('active',val);
+  document.getElementById('tog-disabled').classList.toggle('active',!val);
 }
 function renameDeck(){
   const v=document.getElementById('rename-val').value.trim();if(!v)return;
-  const d=(db.decks||[]).find(x=>x.id===_renameId);if(!d)return;
-  d.name=v;scheduleSave();closeModal('modal-rename-deck');renderDash();renderEditor();
+  const d=(db.decks||[]).find(x=>x.id===_optDeckId);if(!d)return;
+  d.name=v;
+  d.disabled=document.getElementById('tog-disabled').classList.contains('active');
+  scheduleSave();closeModal('modal-deck-options');renderDash();renderEditor();
 }
 function deleteDeck(){
-  const d=(db.decks||[]).find(x=>x.id===_renameId);if(!d)return;
-  if(!confirm(`Delete "${d.name}" and all its cases and cards? This cannot be undone.`))return;
-  db.decks=(db.decks||[]).filter(x=>x.id!==_renameId);
-  db.cases=(db.cases||[]).filter(x=>x.deckId!==_renameId);
-  db.cards=(db.cards||[]).filter(x=>x.deckId!==_renameId);
-  if(eDeckId===_renameId){eDeckId=null;eCaseId=null;eSelType=null;eSelKey=null;}
-  scheduleSave();closeModal('modal-rename-deck');renderDash();renderEditor();
+  const d=(db.decks||[]).find(x=>x.id===_optDeckId);if(!d)return;
+  if(!confirm(`Delete "${d.name}" and all its content? This cannot be undone.`))return;
+  db.decks=(db.decks||[]).filter(x=>x.id!==_optDeckId);
+  db.cases=(db.cases||[]).filter(x=>x.deckId!==_optDeckId);
+  db.cards=(db.cards||[]).filter(x=>x.deckId!==_optDeckId);
+  if(eDeckId===_optDeckId){eDeckId=null;eCaseId=null;eSelType=null;eSelKey=null;}
+  scheduleSave();closeModal('modal-deck-options');renderDash();renderEditor();
+}
+
+// ── SHARING ─────────────────────────────────────
+let _shareDeckId=null;
+
+function openShareModal(){
+  closeModal('modal-deck-options');
+  _shareDeckId=_optDeckId;
+  const d=(db.decks||[]).find(x=>x.id===_shareDeckId);if(!d)return;
+  document.getElementById('share-title').textContent='Share: '+d.name;
+  // reset tabs
+  switchShareTab('link',document.querySelector('.modal-tab'));
+  document.getElementById('share-link-area').innerHTML='<button class="btn btn-p" id="gen-link-btn" onclick="generateShareLink()">Generate Link</button>';
+  document.getElementById('share-link-list').innerHTML='';
+  document.getElementById('sent-invites-list').innerHTML='';
+  document.getElementById('invite-email').value='';
+  openModal('modal-share');
+  loadShareLinks();loadSentInvites();
+}
+
+function switchShareTab(tab,el){
+  document.querySelectorAll('.modal-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.modal-tab-panel').forEach(p=>p.classList.remove('active'));
+  if(el)el.classList.add('active');
+  document.getElementById('share-'+tab+'-panel').classList.add('active');
+}
+
+function deckSnapshot(deckId){
+  const d=(db.decks||[]).find(x=>x.id===deckId);
+  const cases=(db.cases||[]).filter(x=>x.deckId===deckId);
+  const cards=(db.cards||[]).filter(x=>x.deckId===deckId);
+  return JSON.stringify({deck:d,cases,cards});
+}
+
+async function generateShareLink(){
+  if(!sb||!currentUser){alert('Sign in to share decks.');return;}
+  const d=(db.decks||[]).find(x=>x.id===_shareDeckId);if(!d)return;
+  const btn=document.getElementById('gen-link-btn');btn.textContent='…';btn.disabled=true;
+  const {data,error}=await sb.from('shared_decks').insert({
+    owner_id:currentUser.id,deck_name:d.name,payload:deckSnapshot(_shareDeckId)
+  }).select().single();
+  btn.textContent='Generate Link';btn.disabled=false;
+  if(error){alert('Error: '+error.message);return;}
+  showShareLink(data);loadShareLinks();
+}
+
+function showShareLink(row){
+  const url=window.location.href.split('?')[0]+'?import='+row.token;
+  document.getElementById('share-link-area').innerHTML=`
+    <p style="font-size:12px;color:var(--muted);margin-bottom:8px">Link created. Share it with anyone:</p>
+    <div class="link-box">
+      <input class="link-input" id="share-url" value="${url}" readonly onclick="this.select()">
+      <button class="btn btn-sm btn-p" onclick="copyLink()">Copy</button>
+    </div>`;
+}
+
+function copyLink(){
+  const inp=document.getElementById('share-url');if(!inp)return;
+  navigator.clipboard.writeText(inp.value).then(()=>{}).catch(()=>{inp.select();document.execCommand('copy');});
+}
+
+async function loadShareLinks(){
+  if(!sb||!currentUser)return;
+  const {data}=await sb.from('shared_decks').select('id,token,deck_name,created_at').eq('owner_id',currentUser.id).eq('deck_name',(db.decks||[]).find(x=>x.id===_shareDeckId)?.name||'');
+  if(!data||!data.length){document.getElementById('share-link-list').innerHTML='';return;}
+  document.getElementById('share-link-list').innerHTML='<div style="font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Active Links</div>'+
+    data.map(r=>{
+      const url=window.location.href.split('?')[0]+'?import='+r.token;
+      return`<div class="invite-item">
+        <div class="invite-item-info"><div class="invite-item-to" style="font-family:var(--mono);font-size:10px">${r.token.slice(0,16)}…</div><div class="invite-item-status">${new Date(r.created_at).toLocaleDateString()}</div></div>
+        <button class="btn btn-sm btn-danger" onclick="revokeLink('${r.id}')">Revoke</button>
+      </div>`;
+    }).join('');
+}
+
+async function revokeLink(id){
+  if(!confirm('Revoke this link? Anyone who had it will no longer be able to import.'))return;
+  await sb.from('shared_decks').delete().eq('id',id);loadShareLinks();
+}
+
+async function sendInvite(){
+  if(!sb||!currentUser){alert('Sign in to send invites.');return;}
+  const email=document.getElementById('invite-email').value.trim();
+  if(!email){alert('Enter an email address.');return;}
+  const d=(db.decks||[]).find(x=>x.id===_shareDeckId);if(!d)return;
+  const {error}=await sb.from('deck_invites').insert({
+    owner_id:currentUser.id,owner_email:currentUser.email,
+    target_email:email,deck_name:d.name,payload:deckSnapshot(_shareDeckId)
+  });
+  if(error){alert('Error: '+error.message);return;}
+  document.getElementById('invite-email').value='';
+  loadSentInvites();
+}
+
+async function loadSentInvites(){
+  if(!sb||!currentUser)return;
+  const {data}=await sb.from('deck_invites').select('id,target_email,deck_name,accepted,created_at').eq('owner_id',currentUser.id).eq('deck_name',(db.decks||[]).find(x=>x.id===_shareDeckId)?.name||'');
+  if(!data||!data.length){document.getElementById('sent-invites-list').innerHTML='';return;}
+  document.getElementById('sent-invites-list').innerHTML='<div style="font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Sent Invites</div>'+
+    data.map(r=>`<div class="invite-item">
+      <div class="invite-item-info"><div class="invite-item-to">${esc(r.target_email)}</div><div class="invite-item-status">${r.accepted?'✓ Accepted':'Pending'} · ${new Date(r.created_at).toLocaleDateString()}</div></div>
+      <button class="btn btn-sm btn-danger" onclick="revokeInvite('${r.id}')">Revoke</button>
+    </div>`).join('');
+}
+
+async function revokeInvite(id){
+  if(!confirm('Revoke this invite?'))return;
+  await sb.from('deck_invites').delete().eq('id',id);loadSentInvites();
+}
+
+// Check inbox for invites sent to the logged-in user
+async function checkInvites(){
+  if(!sb||!currentUser)return;
+  const {data}=await sb.from('deck_invites').select('*').eq('target_email',currentUser.email).eq('accepted',false);
+  if(!data||!data.length)return;
+  const banner=document.getElementById('invites-banner');
+  document.getElementById('invites-text').textContent=`You have ${data.length} pending deck invite${data.length!==1?'s':''}.`;
+  banner.classList.add('show');
+}
+
+async function loadInviteInbox(){
+  if(!sb||!currentUser)return;
+  const {data}=await sb.from('deck_invites').select('*').eq('target_email',currentUser.email).eq('accepted',false);
+  const box=document.getElementById('invite-inbox');
+  if(!data||!data.length){box.innerHTML='<div style="font-size:13px;color:var(--muted);padding:8px 0">No pending invites.</div>';return;}
+  box.innerHTML=data.map(r=>`<div class="invite-item">
+    <div class="invite-item-info"><div class="invite-item-to">${esc(r.deck_name)}</div><div class="invite-item-status">From: ${esc(r.owner_email)}</div></div>
+    <button class="btn btn-sm btn-p" onclick="acceptInvite('${r.id}','${r.deck_name}','${btoa(r.payload)}')">Import</button>
+  </div>`).join('');
+}
+
+async function acceptInvite(id,deckName,payloadB64){
+  const payload=JSON.parse(atob(payloadB64));
+  importDeckPayload(payload,deckName);
+  await sb.from('deck_invites').update({accepted:true}).eq('id',id);
+  closeModal('modal-invites');renderDash();
+  document.getElementById('invites-banner').classList.remove('show');
+}
+
+// Import a deck from a public link token
+async function importFromToken(token){
+  if(!sb){alert('Sign in to import shared decks.');document.getElementById('auth-screen').style.display='flex';return;}
+  const {data,error}=await sb.from('shared_decks').select('payload,deck_name').eq('token',token).single();
+  if(error||!data){alert('Import link not found or revoked.');return;}
+  const payload=JSON.parse(data.payload);
+  importDeckPayload(payload,data.deck_name);
+  renderDash();alert(`Deck "${data.deck_name}" imported successfully!`);
+}
+
+function importDeckPayload(payload,deckName){
+  const newDeckId=uid('d');
+  if(!db.decks)db.decks=[];
+  db.decks.push({id:newDeckId,name:deckName+' (imported)',disabled:false});
+  const caseIdMap={};
+  (payload.cases||[]).forEach(cs=>{
+    const newId=uid('cs');caseIdMap[cs.id]=newId;
+    if(!db.cases)db.cases=[];
+    db.cases.push({...cs,id:newId,deckId:newDeckId});
+  });
+  (payload.cards||[]).forEach(c=>{
+    if(!db.cards)db.cards=[];
+    db.cards.push({...c,id:uid('c'),deckId:newDeckId,caseId:caseIdMap[c.caseId]||null,
+      state:'new',due:TODAY,stab:1,diff:5,reps:0,lapses:0,rated:null});
+  });
+  scheduleSave();
 }
 
 // ── SETTINGS ────────────────────────────────────
@@ -1215,15 +1416,12 @@ function saveSettings(){
 function renderProgress(){
   const cards=db.cards||[];
   const tLog=(db.ratingLog||{})[TODAY]||{total:0,good:0};
-
-  // Summary — match dashboard colour order: orange, blue, green, light-blue
   document.getElementById('pg-summary').innerHTML=`
     <div class="pg-si"><div class="pg-sv c-a2">${tLog.total}</div><div class="pg-sl">Reviewed Today</div></div>
     <div class="pg-si"><div class="pg-sv c-acc">${(db.streak||{}).count||0}</div><div class="pg-sl">Day Streak</div></div>
     <div class="pg-si"><div class="pg-sv c-g">${cards.filter(c=>c.state==='review'||c.state==='relearn').length}</div><div class="pg-sl">In Review</div></div>
     <div class="pg-si"><div class="pg-sv c-a3">${cards.filter(c=>c.state==='new').length}</div><div class="pg-sl">Unseen</div></div>`;
 
-  // Forecast — fixed bar area, label row below number
   const dayNames=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   const fcData=Array.from({length:7},(_,i)=>{
     const d=new Date();d.setDate(d.getDate()+i);
@@ -1231,57 +1429,34 @@ function renderProgress(){
   });
   const mx=Math.max(...fcData.map(x=>x.n),1);
   document.getElementById('forecast').innerHTML=fcData.map(x=>
-    `<div class="fc-col">
-      <div class="fc-bar-area"><div class="fc-bar${x.today?' today':''}" style="height:${Math.max(3,x.n/mx*76)}px"></div></div>
-      <div class="fc-n">${x.n}</div>
-      <div class="fc-lbl${x.today?' today':''}">${x.today?'TODAY':x.lbl}</div>
-    </div>`).join('');
+    `<div class="fc-col"><div class="fc-bar-area"><div class="fc-bar${x.today?' today':''}" style="height:${Math.max(3,x.n/mx*76)}px"></div></div><div class="fc-n">${x.n}</div><div class="fc-lbl${x.today?' today':''}">${x.today?'TODAY':x.lbl}</div></div>`).join('');
 
-  // Retention
   document.getElementById('ret-list').innerHTML=(db.decks||[]).map(deck=>{
     const dc=cards.filter(c=>c.deckId===deck.id&&c.reps>0);
     if(!dc.length)return`<div class="ret-row"><span class="ret-name">${esc(deck.name)}</span><span style="font-size:12px;color:var(--muted)">No reviews yet</span></div>`;
     const pct=Math.round(dc.filter(c=>c.stab>=7).length/dc.length*100);
     const col=pct>=80?'var(--green)':pct>=50?'var(--acc)':'var(--red)';
-    return`<div class="ret-row">
-      <span class="ret-name">${esc(deck.name)}</span>
-      <div class="ret-track"><div class="ret-fill" style="width:${pct}%;background:${col}"></div></div>
-      <span class="ret-pct" style="color:${col}">${pct}%</span>
-    </div>`;
+    return`<div class="ret-row"><span class="ret-name">${esc(deck.name)}</span><div class="ret-track"><div class="ret-fill" style="width:${pct}%;background:${col}"></div></div><span class="ret-pct" style="color:${col}">${pct}%</span></div>`;
   }).join('')||'<div style="font-size:12px;color:var(--muted)">No decks.</div>';
 
-  // Weakest cases — top 5 by combined difficulty score
   const scoredCases=(db.cases||[]).map(cs=>({cs,score:caseDifficulty(cs)}))
-    .filter(x=>(db.cards||[]).some(c=>c.caseId===x.cs.id&&c.reps>0))
+    .filter(x=>cards.some(c=>c.caseId===x.cs.id&&c.reps>0))
     .sort((a,b)=>b.score-a.score).slice(0,5);
   const wcEl=document.getElementById('weak-cases');
-  if(!scoredCases.length){wcEl.innerHTML='<div style="font-size:13px;color:var(--muted);padding:6px 0">No data yet — keep studying! 🎉</div>';return;}
-  wcEl.innerHTML=scoredCases.map(({cs,score})=>{
-    const cCards=(db.cards||[]).filter(c=>c.caseId===cs.id&&c.reps>0);
-    const totalLapses=cCards.reduce((a,c)=>a+c.lapses,0);
+  if(!scoredCases.length){wcEl.innerHTML='<div style="font-size:13px;color:var(--muted);padding:6px 0">No data yet — keep studying! 🎉</div>';}
+  else wcEl.innerHTML=scoredCases.map(({cs,score})=>{
+    const cCards=cards.filter(c=>c.caseId===cs.id&&c.reps>0);
     const deck=(db.decks||[]).find(d=>d.id===cs.deckId);
     const pct=Math.round(score*100);
-    return`<div class="wc-row">
-      <div class="wc-info">
-        <div class="wc-title">${esc(cs.title)}</div>
-        <div class="wc-meta">${deck?esc(deck.name):''}  ·  ${cCards.length} cards  ·  ${totalLapses} lapse${totalLapses!==1?'s':''}</div>
-      </div>
-      <div class="wc-bar-wrap"><div class="wc-bar" style="width:${pct}%"></div></div>
-      <div class="wc-score">${pct}%</div>
-    </div>`;
+    return`<div class="wc-row"><div class="wc-info"><div class="wc-title">${esc(cs.title)}</div><div class="wc-meta">${deck?esc(deck.name):''}  ·  ${cCards.length} cards  ·  ${cCards.reduce((a,c)=>a+c.lapses,0)} lapses</div></div><div class="wc-bar-wrap"><div class="wc-bar" style="width:${pct}%"></div></div><div class="wc-score">${pct}%</div></div>`;
   }).join('');
 
-  // State dist
   const st={new:0,learning:0,review:0,relearn:0};
   cards.forEach(c=>{if(st[c.state]!==undefined)st[c.state]++;});
   const tot=cards.length||1;
   const cols={new:'var(--acc)',learning:'var(--a2)',review:'var(--green)',relearn:'var(--red)'};
   document.getElementById('state-dist').innerHTML=Object.entries(st).map(([s,n])=>
-    `<div class="state-row">
-      <span class="state-nm">${s}</span>
-      <div class="state-trk"><div class="state-fill" style="width:${Math.round(n/tot*100)}%;background:${cols[s]}"></div></div>
-      <span class="state-n">${n}</span>
-    </div>`).join('');
+    `<div class="state-row"><span class="state-nm">${s}</span><div class="state-trk"><div class="state-fill" style="width:${Math.round(n/tot*100)}%;background:${cols[s]}"></div></div><span class="state-n">${n}</span></div>`).join('');
 }
 
 // ── MODALS ──────────────────────────────────────
@@ -1289,6 +1464,7 @@ function openModal(id){
   document.getElementById(id).classList.add('open');
   if(id==='modal-new-deck')setTimeout(()=>{const i=document.getElementById('new-deck-name');if(i){i.value='';i.focus();}},50);
   if(id==='modal-settings')openSettingsModal();
+  if(id==='modal-invites')loadInviteInbox();
 }
 function closeModal(id){document.getElementById(id).classList.remove('open');}
 document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',function(e){if(e.target===this)closeModal(this.id);}));
@@ -1297,17 +1473,46 @@ document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',func
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function escPlain(s){return esc(String(s||'').replace(/<[^>]*>/g,''));}
 
+function createDeck(){
+  const name=document.getElementById('new-deck-name').value.trim();if(!name)return;
+  if(!db.decks)db.decks=[];
+  const d={id:uid('d'),name,disabled:false};db.decks.push(d);
+  scheduleSave();closeModal('modal-new-deck');renderDash();eDeckId=d.id;renderEditor();
+}
+
 // ── BOOT ────────────────────────────────────────
 (function init(){
   const hasSB=initSB();
   applyTheme();
+  // Check if Supabase is redirecting back after password reset
+  const params=new URLSearchParams(window.location.search);
+  const hashParams=new URLSearchParams(window.location.hash.replace('#',''));
+  if(hashParams.get('type')==='recovery'||(params.get('type')==='recovery')){
+    const rs=document.getElementById('reset-screen');rs.style.display='flex';return;
+  }
+  // Check for import token in URL
+  const importToken=params.get('import');
+  if(importToken&&hasSB){
+    if(hasSB){
+      sb.auth.getSession().then(({data:{session}})=>{
+        if(session){currentUser=session.user;syncDown().then(()=>{db=loadLocal();enterApp();importFromToken(importToken);window.history.replaceState({},'',window.location.pathname);});}
+        else{document.getElementById('auth-screen').style.display='flex';sessionStorage.setItem('pendingImport',importToken);}
+      });
+    }
+    return;
+  }
   if(hasSB){
     sb.auth.getSession().then(({data:{session}})=>{
-      if(session){currentUser=session.user;syncDown().then(()=>{db=loadLocal();enterApp();});}
-      else{document.getElementById('auth-screen').style.display='flex';}
+      if(session){
+        currentUser=session.user;
+        syncDown().then(()=>{db=loadLocal();enterApp();
+          const pending=sessionStorage.getItem('pendingImport');
+          if(pending){sessionStorage.removeItem('pendingImport');importFromToken(pending);}
+        });
+      }else{document.getElementById('auth-screen').style.display='flex';}
     });
-  } else {
-    // No Supabase configured — go straight to app
+    sb.auth.onAuthStateChange((_,session)=>{if(!session&&currentUser)currentUser=null;});
+  }else{
     enterOffline();
   }
 })();
