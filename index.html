@@ -703,14 +703,14 @@ function showOtpStep() {
     <div class="auth-field">
       <label class="auth-lbl">Verification Code</label>
       <input class="auth-input" id="otp-input" type="text" inputmode="numeric"
-        maxlength="6" placeholder="000000" autocomplete="one-time-code"
+        maxlength="8" placeholder="00000000" autocomplete="one-time-code"
         style="font-size:24px;letter-spacing:8px;text-align:center;"
         oninput="if(this.value.length===6)verifyOtp()"
         onkeydown="if(event.key==='Enter')verifyOtp()">
     </div>
     <div class="auth-err" id="auth-err"></div>
     <div class="auth-ok"  id="auth-ok"></div>
-    <p style="font-size:12px;color:var(--muted)">Enter the 6-digit code from your email. After this you'll use your password to log in.</p>
+    <p style="font-size:12px;color:var(--muted)">Enter the 8-digit code from your email.</p>
     <button class="btn btn-p" onclick="verifyOtp()">Verify & Continue</button>
     <button class="auth-link" onclick="location.reload()" style="text-align:center">← Start over</button>`;
 }
@@ -719,8 +719,8 @@ async function verifyOtp() {
   const token = (document.getElementById('otp-input').value || '').trim();
   const errEl = document.getElementById('auth-err');
   errEl.classList.remove('show');
-  if (token.length !== 6) {
-    errEl.textContent = 'Please enter the full 6-digit code.';
+  if (token.length !== 8) {
+    errEl.textContent = 'Please enter the full 8-digit code.';
     errEl.classList.add('show'); return;
   }
   const btn = document.querySelector('.auth-form .btn-p');
