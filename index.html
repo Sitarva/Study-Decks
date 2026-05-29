@@ -49,7 +49,7 @@ body.dark::before{content:'';position:fixed;inset:0;background:repeating-linear-
 .auth-ok.show{display:block;}
 .auth-links{display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px;}
 .auth-link{font-size:12px;color:var(--acc);cursor:pointer;background:none;border:none;text-decoration:underline;font-family:var(--ui);}
-
+  
 /* ── HEADER ── */
 header{display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:52px;border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:0;z-index:200;gap:12px;}
 .logo{font-size:17px;font-weight:700;letter-spacing:-.3px;display:flex;align-items:center;gap:8px;flex-shrink:0;}
@@ -351,6 +351,8 @@ main{flex:1;padding:32px 28px;max-width:1080px;margin:0 auto;width:100%;}
   </div>
 </div>
 
+
+  
 <!-- ══ RESET PASSWORD (shown when Supabase redirects back with token) ══ -->
 <div id="reset-screen" style="display:none;min-height:100vh;align-items:center;justify-content:center;padding:24px;">
   <div class="auth-box">
@@ -561,6 +563,7 @@ const SB_URL = 'https://zhctcpxhgtrjrpawhthl.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpoY3RjcHhoZ3RyanJwYXdodGhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2ODc3OTUsImV4cCI6MjA5NTI2Mzc5NX0.yriJ5BWWLZi2hTCt5DvyjrePBrsLcW-jJVWscqr9V4M';
 
 let sb = null, currentUser = null, isOffline = false, syncTimer = null;
+let _otpEmail = '', _otpPassword = '';
 
 function initSB() {
   if (SB_URL === 'YOUR_SUPABASE_URL') return false;
@@ -675,15 +678,68 @@ async function handleAuth() {
       if (error) throw error;
       currentUser = data.user; await syncDown(); enterApp();
     } else {
+        // Sign up with password — Supabase sends a 6-digit OTP to verify the email
       const { data, error } = await sb.auth.signUp({ email, password: pw });
       if (error) throw error;
-      if (!data.session) { okEl.textContent='Check your email to confirm your account, then log in.'; okEl.classList.add('show'); }
-      else { currentUser=data.user; await syncDown(); enterApp(); }
+      if (!data.session) {
+        // Email not yet confirmed — show OTP entry step
+        _otpEmail = email;
+        _otpPassword = pw;
+        showOtpStep();
+      } else {
+        currentUser = data.user; await syncDown(); enterApp();
+      }
     }
   } catch(e) { errEl.textContent=e.message||'An error occurred.'; errEl.classList.add('show'); }
   finally { btn.textContent=authMode==='login'?'Log In':authMode==='signup'?'Create Account':'Send Reset Email'; btn.disabled=false; }
 }
 
+function showOtpStep() {
+  const form = document.querySelector('.auth-form');
+  form.innerHTML = `
+    <div style="font-size:13px;color:var(--muted);margin-bottom:4px">
+      Code sent to <strong style="color:var(--text)">${_otpEmail}</strong>
+    </div>
+    <div class="auth-field">
+      <label class="auth-lbl">Verification Code</label>
+      <input class="auth-input" id="otp-input" type="text" inputmode="numeric"
+        maxlength="6" placeholder="000000" autocomplete="one-time-code"
+        style="font-size:24px;letter-spacing:8px;text-align:center;"
+        oninput="if(this.value.length===6)verifyOtp()"
+        onkeydown="if(event.key==='Enter')verifyOtp()">
+    </div>
+    <div class="auth-err" id="auth-err"></div>
+    <div class="auth-ok"  id="auth-ok"></div>
+    <p style="font-size:12px;color:var(--muted)">Enter the 6-digit code from your email. After this you'll use your password to log in.</p>
+    <button class="btn btn-p" onclick="verifyOtp()">Verify & Continue</button>
+    <button class="auth-link" onclick="location.reload()" style="text-align:center">← Start over</button>`;
+}
+
+async function verifyOtp() {
+  const token = (document.getElementById('otp-input').value || '').trim();
+  const errEl = document.getElementById('auth-err');
+  errEl.classList.remove('show');
+  if (token.length !== 6) {
+    errEl.textContent = 'Please enter the full 6-digit code.';
+    errEl.classList.add('show'); return;
+  }
+  const btn = document.querySelector('.auth-form .btn-p');
+  btn.textContent = '…'; btn.disabled = true;
+  try {
+    const { data, error } = await sb.auth.verifyOtp({
+      email: _otpEmail, token, type: 'signup'
+    });
+    if (error) throw error;
+    currentUser = data.user;
+    await syncDown();
+    enterApp();
+  } catch(e) {
+    errEl.textContent = e.message || 'Invalid or expired code. Try again.';
+    errEl.classList.add('show');
+    btn.textContent = 'Verify & Continue'; btn.disabled = false;
+  }
+}
+  
 async function doPasswordReset() {
   const pw  = document.getElementById('new-pw').value;
   const pw2 = document.getElementById('new-pw2').value;
