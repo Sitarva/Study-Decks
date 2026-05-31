@@ -704,7 +704,13 @@ async function handleAuth() {
     } else if (authMode==='login') {
       const { data, error } = await sb.auth.signInWithPassword({ email, password: pw });
       if (error) throw error;
-      currentUser = data.user; await syncDown(); enterApp();
+      currentUser = data.user;
+      // Clear any previous user's local data before pulling from Supabase
+      localStorage.removeItem(KEY);
+      db = seed();
+      await syncDown();
+      enterApp();
+    }
     } else {
       const { data, error } = await sb.auth.signUp({ email, password: pw });
       if (error) throw error;
@@ -1804,7 +1810,11 @@ function createDeck(){
     sb.auth.getSession().then(({data:{session}})=>{
       if(session){
         currentUser=session.user;
-        syncDown().then(()=>{db=loadLocal();enterApp();importFromToken(importToken);window.history.replaceState({},'',window.location.pathname);});
+        // Don't use stale localStorage — always pull fresh from Supabase
+        localStorage.removeItem(KEY);
+        db=seed();
+        syncDown().then(()=>{
+        db=loadLocal();enterApp(
       }else{
         document.getElementById('auth-screen').style.display='flex';
         sessionStorage.setItem('pendingImport',importToken);
