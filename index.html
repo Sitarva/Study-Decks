@@ -587,6 +587,13 @@ main{flex:1;padding:32px 28px;max-width:1080px;margin:0 auto;width:100%;}
       <div class="mrl"><div class="mrl-t">New cards per day</div><div class="mrl-s">Max new cards per session</div></div>
       <input class="ei" id="setting-limit" type="number" min="1" max="999" value="20" style="width:66px;padding:6px 10px;text-align:center;">
     </div>
+    <div class="modal-row">
+      <div class="mrl"><div class="mrl-t">Hide disabled decks</div><div class="mrl-s">Remove disabled decks from the dashboard</div></div>
+      <div class="tog">
+        <button class="tog-opt active" id="tog-hide-off" onclick="setHideDisabled(false)">Show</button>
+        <button class="tog-opt"        id="tog-hide-on"  onclick="setHideDisabled(true)">Hide</button>
+      </div>
+    </div>
     <div class="modal-actions">
       <button class="btn btn-p" onclick="saveSettings()">Save</button>
       <button class="btn" onclick="closeModal('modal-settings')">Cancel</button>
@@ -705,19 +712,21 @@ async function handleAuth() {
       const { data, error } = await sb.auth.signInWithPassword({ email, password: pw });
       if (error) throw error;
       currentUser = data.user;
-      // Clear any previous user's local data before pulling from Supabase
       localStorage.removeItem(KEY);
       db = seed();
       await syncDown();
       enterApp();
-    }
     } else {
       const { data, error } = await sb.auth.signUp({ email, password: pw });
       if (error) throw error;
       if (!data.session) {
         _otpEmail = email; _otpPassword = pw; showOtpStep();
       } else {
-        currentUser = data.user; await syncDown(); enterApp();
+        currentUser = data.user;
+        localStorage.removeItem(KEY);
+        db = seed();
+        await syncDown();
+        enterApp();
       }
     }
   } catch(e) { errEl.textContent=e.message||'An error occurred.'; errEl.classList.add('show'); }
@@ -754,7 +763,11 @@ async function verifyOtp() {
   try {
     const { data, error } = await sb.auth.verifyOtp({ email:_otpEmail, token, type:'signup' });
     if (error) throw error;
-    currentUser = data.user; await syncDown(); enterApp();
+    currentUser = data.user;
+    localStorage.removeItem(KEY);
+    db = seed();
+    await syncDown();
+    enterApp();
   } catch(e) {
     errEl.textContent = e.message||'Invalid or expired code. Try again.';
     errEl.classList.add('show');
@@ -899,7 +912,8 @@ function renderDash(){
     list.innerHTML='<div style="padding:36px;text-align:center;font-size:13px;color:var(--muted)">No decks yet — press + Deck above.</div>';
     return;
   }
-  list.innerHTML=(db.decks||[]).map(deck=>{
+  const hideDisabled=(db.settings||{}).hideDisabled;
+  list.innerHTML=(db.decks||[]).filter(d=>!hideDisabled||!d.disabled).map(deck=>{
     const dc=allCards.filter(c=>c.deckId===deck.id);
     const d=dc.filter(c=>c.due<=TODAY&&c.state!=='new').length;
     const n=dc.filter(c=>c.state==='new').length;
@@ -941,22 +955,7 @@ function dsDragOver(e,type){
 function dsDragLeave(e){e.currentTarget.classList.remove('drag-over');}
 function dsDragEnd(e){e.currentTarget.classList.remove('dragging');}
 
-function dsDrop(e,type){
-  e.currentTarget.classList.remove('drag-over','dragging');
-  const targetId=e.currentTarget.dataset.id;
-  if(!_dragId||_dragId===targetId){_dragId=null;return;}
-  if(type==='deck'){
-    reorderArray(db.decks,_dragId,targetId);
-    scheduleSave();renderDash();renderRail();
-  }else if(type==='case'){
-    reorderArray(db.cases,_dragId,targetId);
-    scheduleSave();renderCaseCol();
-  }else if(type==='subrow'){
-    // stems or cards within a case
-    const arr=_dragType==='stem'?null:null; // handled below
-  }
-  _dragId=null;
-}
+
 
 function reorderArray(arr,fromId,toId){
   const fi=arr.findIndex(x=>x.id===fromId),ti=arr.findIndex(x=>x.id===toId);
@@ -1708,16 +1707,24 @@ function openSettingsModal(){
   document.getElementById('tog-once').classList.toggle('active',(cfg.stemMode||'once')==='once');
   document.getElementById('tog-always').classList.toggle('active',cfg.stemMode==='always');
   document.getElementById('setting-limit').value=cfg.newLimit||20;
+  document.getElementById('tog-hide-off').classList.toggle('active',!cfg.hideDisabled);
+  document.getElementById('tog-hide-on').classList.toggle('active',!!cfg.hideDisabled);
 }
 function setTog(val){
   document.getElementById('tog-once').classList.toggle('active',val==='once');
   document.getElementById('tog-always').classList.toggle('active',val==='always');
 }
+function setHideDisabled(val){
+  document.getElementById('tog-hide-off').classList.toggle('active',!val);
+  document.getElementById('tog-hide-on').classList.toggle('active',val);
+}
 function saveSettings(){
   if(!db.settings)db.settings={};
   db.settings.stemMode=document.getElementById('tog-once').classList.contains('active')?'once':'always';
   db.settings.newLimit=parseInt(document.getElementById('setting-limit').value)||20;
+  db.settings.hideDisabled=document.getElementById('tog-hide-on').classList.contains('active');
   scheduleSave();closeModal('modal-settings');
+  renderDash();
 }
 
 // ── PROGRESS ────────────────────────────────────
@@ -1810,11 +1817,13 @@ function createDeck(){
     sb.auth.getSession().then(({data:{session}})=>{
       if(session){
         currentUser=session.user;
-        // Don't use stale localStorage — always pull fresh from Supabase
         localStorage.removeItem(KEY);
         db=seed();
         syncDown().then(()=>{
-        db=loadLocal();enterApp(
+          db=loadLocal();enterApp();
+          importFromToken(importToken);
+          window.history.replaceState({},'',window.location.pathname);
+        });
       }else{
         document.getElementById('auth-screen').style.display='flex';
         sessionStorage.setItem('pendingImport',importToken);
@@ -1827,6 +1836,8 @@ function createDeck(){
     sb.auth.getSession().then(({data:{session}})=>{
       if(session){
         currentUser=session.user;
+        localStorage.removeItem(KEY);
+        db=seed();
         syncDown().then(()=>{
           db=loadLocal();enterApp();
           const pending=sessionStorage.getItem('pendingImport');
