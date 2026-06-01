@@ -99,26 +99,26 @@ button:disabled{opacity:.38;cursor:default;pointer-events:none;}
 .mob-btn.active{color:var(--acc);}
 
 /* ── LAYOUT ── */
-main{flex:1;padding:32px 28px;max-width:1080px;margin:0 auto;width:100%;}
+main{flex:1;padding:20px 22px;max-width:1200px;margin:0 auto;width:100%;}
 .page{display:none;}
 .page.active{display:block;}
-.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:10px;flex-wrap:wrap;}
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:10px;flex-wrap:wrap;}
 .section-label{font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);}
 
 /* ── STATS ── */
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:24px;border-radius:var(--r);overflow:hidden;}
-.stat{background:var(--surf);padding:20px 18px;display:flex;flex-direction:column;gap:6px;}
-.stat-l{font-size:11px;font-weight:500;letter-spacing:.3px;text-transform:uppercase;color:var(--muted);}
-.stat-v{font-size:30px;font-weight:700;line-height:1;}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:16px;border-radius:var(--r);overflow:hidden;}
+.stat{background:var(--surf);padding:14px 16px;display:flex;flex-direction:column;gap:4px;}
+.stat-l{font-size:10px;font-weight:500;letter-spacing:.3px;text-transform:uppercase;color:var(--muted);}
+.stat-v{font-size:26px;font-weight:700;line-height:1;}
 .c-a2{color:var(--a2);}.c-acc{color:var(--acc);}.c-g{color:var(--green);}.c-a3{color:var(--a3);}
 .stat-s{font-size:11px;color:var(--muted);}
 
 /* ── DASH ACTIONS ── */
-.dash-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px;}
-.big-btn{font-family:var(--ui);font-size:13px;font-weight:600;padding:18px 20px;border:1px solid var(--border);background:var(--acc);color:#fff;cursor:pointer;transition:all .15s;border-radius:var(--r);display:flex;flex-direction:column;gap:4px;text-align:left;width:100%;box-shadow:var(--shadow-sm);}
+.dash-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.big-btn{font-family:var(--ui);font-size:13px;font-weight:600;padding:13px 16px;border:1px solid var(--border);background:var(--acc);color:#fff;cursor:pointer;transition:all .15s;border-radius:var(--r);display:flex;flex-direction:column;gap:3px;text-align:left;width:100%;box-shadow:var(--shadow-sm);}
 .big-btn:hover{background:var(--acc-h);transform:translateY(-1px);box-shadow:var(--shadow);}
 .big-btn:disabled{background:var(--surf);border-color:var(--border);color:var(--muted);transform:none;box-shadow:none;}
-.big-btn .bb-t{font-size:14px;font-weight:700;}
+.big-btn .bb-t{font-size:13px;font-weight:700;}
 .big-btn .bb-s{font-size:11px;font-weight:400;opacity:.8;}
 
 /* ── INVITES BANNER ── */
@@ -128,7 +128,7 @@ main{flex:1;padding:32px 28px;max-width:1080px;margin:0 auto;width:100%;}
 
 /* ── DECK LIST ── */
 .deck-list{display:flex;flex-direction:column;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
-.deck-row{background:var(--surf);padding:14px 18px;display:flex;align-items:center;gap:14px;transition:background .1s;flex-wrap:wrap;cursor:grab;user-select:none;}
+.deck-row{background:var(--surf);padding:10px 14px;display:flex;align-items:center;gap:12px;transition:background .1s;flex-wrap:wrap;cursor:grab;user-select:none;}
 .deck-row:hover{background:var(--card);}
 .deck-row.dragging{opacity:.4;background:var(--acc-dim);}
 .deck-row.drag-over{border-top:2px solid var(--acc);}
@@ -197,7 +197,7 @@ main{flex:1;padding:32px 28px;max-width:1080px;margin:0 auto;width:100%;}
 .done p{font-size:13px;color:var(--muted);margin-bottom:24px;}
 
 /* ── EDITOR ── */
-.ed-layout{display:grid;grid-template-columns:160px 220px 1fr;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;height:calc(100vh - 180px);min-height:480px;}
+.ed-layout{display:grid;grid-template-columns:170px 230px 1fr;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;height:calc(100vh - 160px);min-height:480px;}
 .ed-col{display:flex;flex-direction:column;overflow:hidden;}
 .col-hdr{padding:10px 14px;font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--surf);flex-shrink:0;gap:8px;}
 .col-body{flex:1;overflow-y:auto;background:var(--surf);}
@@ -250,7 +250,7 @@ main{flex:1;padding:32px 28px;max-width:1080px;margin:0 auto;width:100%;}
 .col-search input::placeholder{color:var(--muted);}
 
 /* editor main */
-.ed-main{background:var(--card);padding:24px;display:flex;flex-direction:column;gap:16px;overflow-y:auto;}
+.ed-main{background:var(--card);padding:18px 20px;display:flex;flex-direction:column;gap:14px;overflow-y:auto;}
 .empty-p{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;min-height:300px;color:var(--muted);font-size:13px;gap:12px;text-align:center;}
 .empty-p .epi{font-size:38px;opacity:.2;}
 .ef{display:flex;flex-direction:column;gap:6px;}
@@ -455,6 +455,7 @@ main{flex:1;padding:32px 28px;max-width:1080px;margin:0 auto;width:100%;}
     <div class="ed-layout">
       <div class="ed-col">
         <div class="col-hdr">Decks <button class="btn-icon" style="width:22px;height:22px;font-size:14px;" onclick="openModal('modal-new-deck')">+</button></div>
+        <div class="col-search"><input type="search" id="deck-search" placeholder="Search decks…" oninput="renderRail()"></div>
         <div class="col-body" id="rail-body"></div>
       </div>
       <div class="ed-col" style="border-left:1px solid var(--border);">
@@ -1153,14 +1154,21 @@ function renderEditor(){
 }
 
 function renderRail(){
-  document.getElementById('rail-body').innerHTML=(db.decks||[]).map(d=>`
+  const searchEl=document.getElementById('deck-search');
+  const q=(searchEl?searchEl.value:'').toLowerCase().trim();
+  // Hide disabled decks unless there's an active search query
+  const decks=(db.decks||[]).filter(d=>{
+    if(q) return d.name.toLowerCase().includes(q); // search shows everything including disabled
+    return !d.disabled; // no search = hide disabled
+  });
+  document.getElementById('rail-body').innerHTML=decks.map(d=>`
     <div class="rail-item${d.id===eDeckId?' active':''}${d.disabled?' deck-disabled':''}" data-id="${d.id}" data-deck="${d.id}" onclick="selectDeck('${d.id}')"
       draggable="true" ondragstart="dsDragStart(event,'deck')" ondragover="dsDragOver(event,'deck')" ondrop="dsDrop(event,'deck')" ondragleave="dsDragLeave(event)" ondragend="dsDragEnd(event)">
       <span style="color:var(--muted);font-size:13px;cursor:grab;flex-shrink:0">⠿</span>
-      <span class="rail-name">${esc(d.name)}</span>
+      <span class="rail-name">${esc(d.name)}${d.disabled?' <span style="font-size:9px;opacity:.6">(off)</span>':''}</span>
       <span class="rail-n">${(db.cards||[]).filter(c=>c.deckId===d.id).length}</span>
       <button class="icon-btn" data-action="opts" data-deck="${d.id}" title="Options">⚙</button>
-    </div>`).join('')||'<div style="padding:14px;font-size:12px;color:var(--muted)">No decks.</div>';
+    </div>`).join('')||`<div style="padding:14px;font-size:12px;color:var(--muted)">${q?'No matches.':'No decks.'}</div>`;
 }
 
 document.getElementById('rail-body').addEventListener('click',function(e){
