@@ -1260,13 +1260,21 @@ document.getElementById('case-body').addEventListener('click',function(e){
   else if(a==='delCase')delCase(csId);
 });
 
+function scrollActiveIntoView(colBodyId, selClass) {
+  requestAnimationFrame(() => {
+    const body = document.getElementById(colBodyId);
+    const el   = body && body.querySelector(selClass);
+    if (el) el.scrollIntoView({ block:'nearest', behavior:'smooth' });
+  });
+}
+
 function toggleCase(id){
   eCaseId=eCaseId===id?null:id;
   if(!eCaseId){eSelType=null;eSelKey=null;renderCaseCol();showEmptyPanel();}
-  else{eSelType='case';eSelKey=id;renderCaseCol();showCasePanel(id);}
+  else{eSelType='case';eSelKey=id;renderCaseCol();showCasePanel(id);scrollActiveIntoView('case-body','.case-item.open');}
 }
-function selStem(csId,idx){eCaseId=csId;eSelType='stem';eSelKey=csId+'__'+idx;renderCaseCol();showStemPanel(csId,idx);}
-function selCard(cid,csId){eCaseId=csId;eSelType='card';eSelKey=cid;renderCaseCol();showCardPanel(cid);}
+function selStem(csId,idx){eCaseId=csId;eSelType='stem';eSelKey=csId+'__'+idx;renderCaseCol();showStemPanel(csId,idx);scrollActiveIntoView('case-body','.sub-row.stem-sel');}
+function selCard(cid,csId){eCaseId=csId;eSelType='card';eSelKey=cid;renderCaseCol();showCardPanel(cid);scrollActiveIntoView('case-body','.sub-row.sel:not(.stem-sel)');}
 
 function showEmptyPanel(){document.getElementById('ed-main').innerHTML='<div class="empty-p"><div class="epi">🗂</div><div>Select a deck, then a case or card</div></div>';}
 
@@ -1383,6 +1391,7 @@ function addStem(csId){
   const idx=db.cases[i].stems.length;db.cases[i].stems.push('<p></p>');
   eCaseId=csId;eSelType='stem';eSelKey=csId+'__'+idx;
   scheduleSave();renderCaseCol();showStemPanel(csId,idx);
+  scrollActiveIntoView('case-body','.sub-row.stem-sel');
 }
 
 function delStem(csId,idx){
@@ -1398,6 +1407,7 @@ function addCard(csId){
   if(!db.cards)db.cards=[];db.cards.push(c);
   eCaseId=csId;eSelType='card';eSelKey=c.id;
   scheduleSave();renderCaseCol();showCardPanel(c.id);
+  scrollActiveIntoView('case-body','.sub-row.sel:not(.stem-sel)');
 }
 
 function delCase(id){
