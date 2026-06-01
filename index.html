@@ -197,7 +197,7 @@ main{flex:1;padding:32px 28px;max-width:1080px;margin:0 auto;width:100%;}
 .done p{font-size:13px;color:var(--muted);margin-bottom:24px;}
 
 /* ── EDITOR ── */
-.ed-layout{display:grid;grid-template-columns:160px 220px 1fr;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;min-height:540px;}
+.ed-layout{display:grid;grid-template-columns:160px 220px 1fr;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;height:calc(100vh - 180px);min-height:480px;}
 .ed-col{display:flex;flex-direction:column;overflow:hidden;}
 .col-hdr{padding:10px 14px;font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--surf);flex-shrink:0;gap:8px;}
 .col-body{flex:1;overflow-y:auto;background:var(--surf);}
@@ -243,6 +243,11 @@ main{flex:1;padding:32px 28px;max-width:1080px;margin:0 auto;width:100%;}
 .sub-add{padding:7px 14px 7px 24px;border-bottom:1px solid var(--border);font-size:11px;font-weight:500;cursor:pointer;color:var(--acc);transition:background .1s;}
 .sub-add:hover{background:var(--acc-dim);}
 .sub-add.stem-add{color:var(--a2);}
+
+.col-search{padding:7px 10px;border-bottom:1px solid var(--border);background:var(--surf);flex-shrink:0;}
+.col-search input{width:100%;background:var(--card);border:1px solid var(--border);color:var(--text);font-family:var(--ui);font-size:12px;padding:5px 9px;border-radius:var(--r-sm);outline:none;transition:border-color .15s;}
+.col-search input:focus{border-color:var(--acc);}
+.col-search input::placeholder{color:var(--muted);}
 
 /* editor main */
 .ed-main{background:var(--card);padding:24px;display:flex;flex-direction:column;gap:16px;overflow-y:auto;}
@@ -339,7 +344,7 @@ main{flex:1;padding:32px 28px;max-width:1080px;margin:0 auto;width:100%;}
 .invite-item-status{font-size:11px;color:var(--muted);margin-top:2px;}
 
 /* ── RESPONSIVE ── */
-@media(max-width:820px){.ed-layout{grid-template-columns:1fr;}.ed-col:nth-child(1),.ed-col:nth-child(2){max-height:200px;}}
+@media(max-width:820px){.ed-layout{grid-template-columns:1fr;height:auto;}.ed-col:nth-child(1),.ed-col:nth-child(2){height:220px;min-height:0;}}
 @media(max-width:660px){
   .stats{grid-template-columns:repeat(2,1fr);}
   .pg-grid{grid-template-columns:1fr;}
@@ -454,6 +459,7 @@ main{flex:1;padding:32px 28px;max-width:1080px;margin:0 auto;width:100%;}
       </div>
       <div class="ed-col" style="border-left:1px solid var(--border);">
         <div class="col-hdr"><span id="case-col-title">Cases</span><button class="btn-icon" style="width:22px;height:22px;font-size:14px;" id="add-case-btn" onclick="addCase()">+</button></div>
+        <div class="col-search"><input type="search" id="case-search" placeholder="Search cases…" oninput="renderCaseCol()"></div>
         <div class="col-body" id="case-body"></div>
       </div>
       <div class="ed-col ed-main" id="ed-main" style="border-left:1px solid var(--border);">
@@ -1168,7 +1174,9 @@ function renderCaseCol(){
   document.getElementById('case-col-title').textContent=deck?esc(deck.name):'Cases';
   document.getElementById('add-case-btn').disabled=!eDeckId;
   const body=document.getElementById('case-body');
-  const cases=(db.cases||[]).filter(cs=>cs.deckId===eDeckId);
+  const searchEl=document.getElementById('case-search');
+  const q=(searchEl?searchEl.value:'').toLowerCase().trim();
+  const cases=(db.cases||[]).filter(cs=>cs.deckId===eDeckId&&(!q||cs.title.toLowerCase().includes(q)));
   if(!eDeckId){body.innerHTML='<div style="padding:14px;font-size:12px;color:var(--muted)">Select a deck.</div>';return;}
   if(!cases.length){body.innerHTML='<div style="padding:14px;font-size:12px;color:var(--muted)">No cases yet.</div>';return;}
   body.innerHTML=cases.map(cs=>{
