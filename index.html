@@ -160,13 +160,14 @@ main{flex:1;padding:20px 22px;max-width:1200px;margin:0 auto;width:100%;}
 .stem-body h1,.stem-body h2,.stem-body h3{font-style:normal;font-family:var(--ui);font-weight:600;}
 .stem-body ul,.stem-body ol{padding-left:20px;margin:4px 0;}
 .scene{perspective:1200px;display:flex;align-items:center;justify-content:center;cursor:pointer;min-height:280px;margin-bottom:20px;-webkit-tap-highlight-color:transparent;}
-.card3d{width:100%;height:280px;position:relative;transform-style:preserve-3d;transition:transform .48s cubic-bezier(.4,0,.2,1);}
+.card3d{width:100%;height:340px;position:relative;transform-style:preserve-3d;transition:transform .48s cubic-bezier(.4,0,.2,1);}
 .card3d.flip{transform:rotateY(180deg);}
 .face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border:1px solid var(--border);background:var(--surf);display:flex;flex-direction:column;padding:32px;border-radius:var(--r);box-shadow:var(--shadow);}
 .back{transform:rotateY(180deg);}
 .face-lbl{font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
 .face-lbl::after{content:'';flex:1;height:1px;background:var(--border);}
 .face-body{flex:1;display:flex;align-items:center;justify-content:center;text-align:center;overflow-y:auto;}
+.face-body.top{align-items:flex-start;text-align:left;padding-top:4px;}
 .f-q{font-family:var(--serif);font-size:22px;line-height:1.5;color:var(--text);}
 .f-a{font-size:14px;line-height:1.85;text-align:left;max-width:100%;}
 .f-a h1,.rte-area h1{font-size:17px;font-weight:700;font-family:var(--ui);margin:8px 0 4px;}
@@ -1098,7 +1099,7 @@ function renderStudy(){
       </div>
       <div class="face back">
         <div class="face-lbl">Answer</div>
-        <div class="face-body"><div class="f-a">${card.a}</div></div>
+        <div class="face-body top"><div class="f-a">${card.a}</div></div>
         <div class="face-hint">Rate your recall</div>
       </div>
     </div>
