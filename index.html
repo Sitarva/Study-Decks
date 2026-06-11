@@ -1010,9 +1010,10 @@ function _go(mode,deckId){
   const lim=(db.settings||{}).newLimit||20;
   const active=activeDeckIds();
   if(mode==='deck'){
-    const due=allCards.filter(c=>c.deckId===deckId&&c.due<=TODAY&&c.state!=='new');
-    const nw=allCards.filter(c=>c.deckId===deckId&&c.state==='new').slice(0,lim);
-    queue=orderByCases([...due,...nw],deckId);queue._deckId=deckId;
+    // Queue all cards in the deck in case order — ignore due dates so
+    // the user can always restudy a full deck on demand
+    const all=allCards.filter(c=>c.deckId===deckId);
+    queue=orderByCases(all,deckId);queue._deckId=deckId;
   }else if(mode==='due'){
     const due=allCards.filter(c=>active.includes(c.deckId)&&c.due<=TODAY&&c.state!=='new');
     const nw=allCards.filter(c=>active.includes(c.deckId)&&c.state==='new').slice(0,lim*2);
@@ -1297,7 +1298,7 @@ function showStemPanel(csId,idx){
   document.getElementById('ed-main').innerHTML=`
     <div style="font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--a2)">Stem ${idx+1} of ${stems.length} — ${esc(cs.title)}</div>
     <div class="ef"><label class="el">Clinical Vignette</label>
-      <div class="rte-wrap">${buildToolbar('rte-stem')}<div class="rte-area stem-rte tall" id="rte-stem" contenteditable="true" oninput="saveStemHTML('${csId}',${idx})" onkeydown="handleTab(event)">${stem||'<p></p>'}</div></div>
+      <div class="rte-wrap">${buildToolbar('rte-stem')}<div class="rte-area stem-rte tall" id="rte-stem" contenteditable="true" oninput="saveStemHTML('${csId}',${idx})" onkeydown="handleTab(event)" onpaste="handlePaste(event)">${stem||'<p></p>'}</div></div>
     </div>
     <p style="font-size:12px;color:var(--muted)">One stem is randomly picked per case session.</p>
     <button class="btn btn-sm btn-danger" onclick="delStem('${csId}',${idx})">Delete this Stem</button>`;
@@ -1309,10 +1310,10 @@ function showCardPanel(id){
   document.getElementById('ed-main').innerHTML=`
     ${cs?`<div style="font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--a2)">Card in: ${esc(cs.title)}</div>`:''}
     <div class="ef"><label class="el">Front — Question</label>
-      <div class="rte-wrap">${buildToolbar('rte-q')}<div class="rte-area" id="rte-q" contenteditable="true" oninput="saveCardHTML('${id}','q')" onkeydown="handleTab(event)">${c.q}</div></div>
+      <div class="rte-wrap">${buildToolbar('rte-q')}<div class="rte-area" id="rte-q" contenteditable="true" oninput="saveCardHTML('${id}','q')" onkeydown="handleTab(event)" onpaste="handlePaste(event)">${c.q}</div></div>
     </div>
     <div class="ef"><label class="el">Back — Answer</label>
-      <div class="rte-wrap">${buildToolbar('rte-a')}<div class="rte-area tall" id="rte-a" contenteditable="true" oninput="saveCardHTML('${id}','a')" onkeydown="handleTab(event)">${c.a}</div></div>
+      <div class="rte-wrap">${buildToolbar('rte-a')}<div class="rte-area tall" id="rte-a" contenteditable="true" oninput="saveCardHTML('${id}','a')" onkeydown="handleTab(event)" onpaste="handlePaste(event)">${c.a}</div></div>
     </div>
     <div class="card-meta">
       <span>State: <span class="tag-${c.state}">${c.state}</span></span>
@@ -1345,6 +1346,20 @@ function handleTab(e){
   e.shiftKey?document.execCommand('outdent'):document.execCommand('indent');
 }
 
+function handlePaste(e){
+  e.preventDefault();
+  // Prefer plain HTML from clipboard but strip Notion noise
+  let html = e.clipboardData.getData('text/html');
+  if(html){
+    html=cleanHTML(html);
+    document.execCommand('insertHTML',false,html);
+  }else{
+    // Fallback to plain text
+    const text=e.clipboardData.getData('text/plain');
+    document.execCommand('insertText',false,text);
+  }
+}
+
 function pickImg(elId){
   const inp=document.createElement('input');inp.type='file';inp.accept='image/*';
   inp.onchange=ev=>{
@@ -1360,10 +1375,22 @@ function pickImg(elId){
   };inp.click();
 }
 
+function cleanHTML(html){
+  // Strip HTML comments (Notion injects <!-- notionvc: ... -->)
+  // Strip empty Notion wrapper spans/divs that carry no content
+  return (html||'')
+    .replace(/<!--[\s\S]*?-->/g,'')        // HTML comments
+    .replace(/<meta[^>]*>/gi,'')           // meta tags
+    .replace(/<link[^>]*>/gi,'')           // link tags
+    .replace(/\s*data-notion[^=]*="[^"]*"/gi,'')  // data-notion-* attrs
+    .replace(/\s*class="notion[^"]*"/gi,'')       // notion CSS classes
+    .trim();
+}
+
 function saveCardHTML(cardId,field){
   const el=document.getElementById(field==='q'?'rte-q':'rte-a');if(!el)return;
   const i=(db.cards||[]).findIndex(c=>c.id===cardId);
-  if(i!==-1){db.cards[i][field]=el.innerHTML;scheduleSave();}
+  if(i!==-1){db.cards[i][field]=cleanHTML(el.innerHTML);scheduleSave();}
   if(field==='q')renderCaseCol();
 }
 
@@ -1371,7 +1398,7 @@ function saveStemHTML(csId,idx){
   const el=document.getElementById('rte-stem');if(!el)return;
   const i=(db.cases||[]).findIndex(c=>c.id===csId);if(i===-1)return;
   if(!db.cases[i].stems)db.cases[i].stems=[];
-  db.cases[i].stems[idx]=el.innerHTML;scheduleSave();
+  db.cases[i].stems[idx]=cleanHTML(el.innerHTML);scheduleSave();
 }
 
 // mutations
